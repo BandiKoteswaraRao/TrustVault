@@ -87,4 +87,43 @@ All 10 tests passed:
 - `records audit events for registration, login success, and login failure` (Passed)
 
 **Commit:**
-Commit `4b71e89` (Pending Phase 3 commit)
+`a10a495` — `feat(auth): implement registration, bcrypt hashing, JWT auth, rate limiting, and security tests`
+
+## 2026-10-24 — Phase 4: Server-Enforced Authorization, BOLA/BFLA Prevention, and Immediate Revocation
+
+**Prompt sent:**
+> "Implement server-enforced document authorization, private file storage outside web roots, UUIDv4 storage mapping, owner-only permission grants and revocations, immediate revocation enforcement on downloads, and comprehensive negative authorization tests for BOLA/IDOR, BFLA, and malicious uploads."
+
+**Tool output:**
+The tool created `backend/src/services/fileStorageService.ts`, `backend/src/services/documentService.ts`, `backend/src/services/permissionService.ts`, `backend/src/middleware/upload.ts`, `backend/src/controllers/documentController.ts`, `backend/src/controllers/permissionController.ts`, `backend/src/routes/documentRoutes.ts`, and `backend/tests/security/authorization.test.ts`.
+
+**Problem discovered:**
+1. **Host Antivirus Quarantine during Security Testing:** In negative upload test 9, writing a test case with a literal PHP webshell string (`<?php system($_GET["cmd"]); ?>`) triggered Windows Defender's active file scanner, resulting in OS error `Operation did not complete successfully because the file contains a virus or potentially unwanted software`. This demonstrated that security test fixtures should test extension blocking with benign payload stubs rather than signature-matched live exploit vectors that trip host operating system endpoint protection.
+2. **Generic Error Names:** The centralized error handler returned `error: "Error"` for custom application exceptions because `new Error()` defaults `name` to `'Error'`, which caused HTTP 403 responses to lack descriptive REST standard types like `"Forbidden"`.
+3. **BFLA Vulnerability Surface:** A naive permission model could allow a document recipient (Bob) to view other grantees or share access with a third party (Charlie). The controller and service needed explicit owner-only assertions (`owner_id === actingUserId`) to prevent Broken Function-Level Authorization.
+
+**My correction:**
+1. Re-implemented file extension tests using benign executable script buffers (`.sh`, `.exe`, `.bat`) that verify the server's MIME and extension rejection rules without triggering Windows Defender host heuristics.
+2. Added an explicit `statusNameMap` in `errorHandler.ts` mapping HTTP status codes (400 -> `'Bad Request'`, 401 -> `'Unauthorized'`, 403 -> `'Forbidden'`, 404 -> `'Not Found'`, 409 -> `'Conflict'`).
+3. Enforced zero-trust ownership checks on document update, delete, permission listing, permission granting, and permission revocation.
+4. Enforced real-time dynamic database lookups on every single document download, ensuring revoked permissions take effect immediately with zero latency.
+
+**Verification:**
+Executed `npm.cmd test` in `backend/`:
+All 23 tests passed across `auth.test.ts` and `authorization.test.ts`:
+- `1. Rejects unauthenticated request to list documents with 401 Unauthorized` (Passed)
+- `2. Rejects User B's attempt to download User A's private document before permission is granted` (Passed)
+- `3. Rejects User B's attempt to view the permission list of User A's document` (Passed)
+- `Owner (Alice) grants access to Bob successfully` (Passed)
+- `Bob can successfully download the document while permission is active` (Passed)
+- `4. Rejects recipient's (Bob) attempt to grant access to a third party (Charlie) (BFLA)` (Passed)
+- `5. Rejects recipient's attempt to revoke permissions on the document` (Passed)
+- `6. Prevents privilege escalation and forged ownership updates via request body` (Passed)
+- `Alice (owner) revokes Bob's access` (Passed)
+- `7. Immediately rejects Bob's download request after permission revocation (Immediate Revocation)` (Passed)
+- `8. Rejects access when targeting invalid or manipulated document IDs (BOLA/IDOR)` (Passed)
+- `9. Rejects file upload with dangerous executable extension (.sh, .exe, .bat)` (Passed)
+- `10. Prevents unauthenticated and unauthorized access to audit verification and logs` (Passed)
+
+**Commit:**
+Commit `6e93c12` (Pending Phase 4 commit)

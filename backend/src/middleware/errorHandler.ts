@@ -13,9 +13,18 @@ export function errorHandler(
   const statusCode = typeof err.statusCode === 'number' ? err.statusCode : 500;
   const isClientError = statusCode >= 400 && statusCode < 500;
 
+  const statusNameMap: Record<number, string> = {
+    400: 'Bad Request',
+    401: 'Unauthorized',
+    403: 'Forbidden',
+    404: 'Not Found',
+    409: 'Conflict',
+    429: 'Too Many Requests'
+  };
+
   // Never expose internal stack traces or database error details to clients in production
   const responsePayload = {
-    error: isClientError ? (err.name || 'Request Error') : 'Internal Server Error',
+    error: statusNameMap[statusCode] || (isClientError ? 'Request Error' : 'Internal Server Error'),
     message: isClientError ? err.message : 'An unexpected error occurred. Please try again later.',
     ...(config.NODE_ENV === 'development' && !isClientError ? { stack: err.stack } : {})
   };

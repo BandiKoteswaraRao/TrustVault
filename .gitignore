@@ -24,6 +24,8 @@ coverage/
 # Storage - uploaded documents must never be committed
 storage/uploads/*
 !storage/uploads/.gitkeep
+backend/storage/
+backend/storage/uploads/*
 
 # Database data directory (local embedded Postgres)
 .pgdata/
