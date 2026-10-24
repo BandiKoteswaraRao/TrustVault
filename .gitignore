@@ -25,6 +25,11 @@ coverage/
 storage/uploads/*
 !storage/uploads/.gitkeep
 
+# Database data directory (local embedded Postgres)
+.pgdata/
+*.sqlite
+*.db
+
 # Logs
 logs/
 *.log

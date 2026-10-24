@@ -28,4 +28,28 @@ The tool executed environment diagnostic commands (`node -v`, `npm.cmd -v`, `git
 3. Verified `THREATS.md` covers all 15 required security scenarios with a STRIDE-based traceability matrix.
 
 **Commit:**
-Commit `d3a4369` (Pending initial commit in Phase 1)
+`f2f3d1a` — `chore: initialize TrustVault project structure, threat model, and foundation`
+
+## 2026-10-24 — Phase 2: Database Architecture, Migrations, and Dual-Mode Connection Pool
+
+**Prompt sent:**
+> "Design and implement the PostgreSQL database layer, SQL schema migrations for users, documents, permissions, and audit_events, connection pooling with support for production Postgres and zero-dependency embedded testing (PGlite), and a reproducible migration and seed runner."
+
+**Tool output:**
+The tool created `database/migrations/001_create_tables.sql`, `backend/src/config/index.ts`, `backend/src/db/index.ts`, `backend/src/db/migrate.ts`, and `backend/src/db/seed.ts`. When executing the migration script, PGlite threw an error: `error: cannot insert multiple commands into a prepared statement`.
+
+**Problem discovered:**
+1. In PostgreSQL and PGlite, the standard parameterized `query(sql)` function treats the input as an individual prepared statement and rejects scripts containing multiple SQL commands separated by semicolons.
+2. In standalone CLI commands (`npx tsx migrate.ts`), an unconfigured in-memory PGlite instance discarded database state upon process exit, preventing idempotency testing between CLI invocations.
+
+**My correction:**
+1. Extended `IDatabaseClient` with an `exec(sql: string)` method that dispatches to `instance.exec(sql)` in PGlite and `pool.query(sql)` in pg driver, allowing batch DDL migrations to run atomically inside transactions.
+2. Configured persistent `./.pgdata` storage for development mode while retaining memory-isolated instances for automated tests. Added `.pgdata/` to `.gitignore`.
+
+**Verification:**
+1. Executed `npx.cmd tsx src/db/migrate.ts`: successfully applied `001_create_tables.sql`.
+2. Executed `npx.cmd tsx src/db/migrate.ts` a second time: confirmed idempotency (`Applied 0 new migrations`).
+3. Executed `npx.cmd tsx src/db/seed.ts`: successfully created tables and seeded demo owner and recipient users with bcrypt work factor 12.
+
+**Commit:**
+Commit `d719a0e` (Pending Phase 2 commit)
