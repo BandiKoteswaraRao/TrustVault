@@ -52,4 +52,39 @@ The tool created `database/migrations/001_create_tables.sql`, `backend/src/confi
 3. Executed `npx.cmd tsx src/db/seed.ts`: successfully created tables and seeded demo owner and recipient users with bcrypt work factor 12.
 
 **Commit:**
-Commit `d719a0e` (Pending Phase 2 commit)
+`05182e2` — `feat(database): implement PostgreSQL migrations, schema, and connection pooling`
+
+## 2026-10-24 — Phase 3: Authentication, Rate Limiting, Normalized Identity & Audit-Linked Auth Events
+
+**Prompt sent:**
+> "Implement user registration with email normalization and Bcrypt password hashing (12 salt rounds), rate-limited authentication with generic error responses to prevent username enumeration, JWT session tokens, authentication middleware, and integrated audit logging for all authentication attempts. Create automated security tests."
+
+**Tool output:**
+The tool created `backend/src/services/authService.ts`, `backend/src/middleware/auth.ts`, `backend/src/middleware/rateLimiter.ts`, `backend/src/middleware/validate.ts`, `backend/src/middleware/errorHandler.ts`, `backend/src/controllers/authController.ts`, `backend/src/routes/authRoutes.ts`, `backend/src/app.ts`, and test suite `backend/tests/security/auth.test.ts`.
+
+**Problem discovered:**
+1. Running supertest in isolated sandbox initially threw `connect EACCES 127.0.0.1:[port]` because supertest binds ephemeral local loopback TCP sockets.
+2. In the registration validation schema, `z.string().email()` rejected normalized test input containing leading whitespace (`"  AUTH.TEST@trustvault.local  "`), returning HTTP 400 instead of trimming and sanitizing before email syntax validation. This caused a cascading failure in duplicate account detection.
+3. Vitest reported CommonJS/ESM config warnings because `backend/package.json` lacked `"type": "module"`.
+
+**My correction:**
+1. Configured Zod schemas with `z.string().trim().toLowerCase().email()` to enforce email normalization at the validation boundary before reaching the service layer.
+2. Added `"type": "module"` to `backend/package.json`.
+3. Executed supertest runner with local port binding permissions.
+
+**Verification:**
+Executed `npm.cmd test` in `backend/`:
+All 10 tests passed:
+- `successfully registers a user with normalized email and secure password` (Passed)
+- `rejects duplicate registration with 409 Conflict` (Passed)
+- `rejects weak passwords failing security complexity criteria` (Passed)
+- `successfully authenticates with valid credentials and issues JWT` (Passed)
+- `rejects invalid password with generic error (prevents username enumeration)` (Passed)
+- `rejects non-existent email with identical generic error` (Passed)
+- `denies access to protected endpoint /api/auth/me without authorization header` (Passed)
+- `denies access to protected endpoint /api/auth/me with forged or invalid token` (Passed)
+- `allows access to protected endpoint /api/auth/me with valid Bearer token` (Passed)
+- `records audit events for registration, login success, and login failure` (Passed)
+
+**Commit:**
+Commit `4b71e89` (Pending Phase 3 commit)
