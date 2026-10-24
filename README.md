@@ -121,7 +121,7 @@ TrustVault is fully configured for continuous 24/7 cloud deployment on **Render*
 2. Click **New +** -> **Blueprint**.
 3. Connect your GitHub repository: `https://github.com/BandiKoteswaraRao/TrustVault`.
 4. Render automatically detects `render.yaml`, builds the multi-stage `Dockerfile`, exposes port `${PORT:8080}`, and monitors service health at `/health`.
-5. Once deployed, Render assigns a live public HTTPS URL (e.g., `https://trustvault.onrender.com`).
+5. Once deployed, Render assigns a live public HTTPS URL: **[https://trustvault-q656.onrender.com](https://trustvault-q656.onrender.com)**.
 
 ### Zero-Downtime Healthcheck:
 Render monitors the application using:

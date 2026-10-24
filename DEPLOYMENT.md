@@ -16,6 +16,10 @@ This guide details how to securely deploy **TrustVault** in production environme
 TrustVault includes a native `render.yaml` blueprint and a multi-stage `Dockerfile` (Java 21 LTS runtime).
 
 ### Blueprint Setup (1-Click Deployment)
+- **Live Cloud Web Service:** [https://trustvault-q656.onrender.com](https://trustvault-q656.onrender.com)
+- **Health Check Path:** [https://trustvault-q656.onrender.com/health](https://trustvault-q656.onrender.com/health)
+- **Render Service ID:** `srv-dbebc5vb9u1s7394ju90`
+
 1. Push this repository to GitHub: `https://github.com/BandiKoteswaraRao/TrustVault`.
 2. In the [Render Dashboard](https://dashboard.render.com), click **New +** -> **Blueprint**.
 3. Select the `TrustVault` repository and click **Connect**.
