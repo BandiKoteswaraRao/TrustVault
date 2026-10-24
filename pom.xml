@@ -15,7 +15,7 @@
     <artifactId>trustvault</artifactId>
     <version>1.0.0</version>
     <name>TrustVault</name>
-    <description>TrustVault - Secure Document Sharing with a Tamper-Evident Audit Trail</description>
+    <description>TrustVault — secure document sharing with a real audit trail</description>
 
     <properties>
         <java.version>21</java.version>

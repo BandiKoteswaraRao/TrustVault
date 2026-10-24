@@ -15,6 +15,7 @@ public class HealthCheckController {
         return ResponseEntity.ok(Map.of(
                 "status", "UP",
                 "service", "TrustVault",
+                "tagline", "TrustVault — secure document sharing with a real audit trail",
                 "version", "1.0.0",
                 "security", "Zero-Trust RBAC & Cryptographic Audit Trail Active",
                 "timestamp", Instant.now().toString()
