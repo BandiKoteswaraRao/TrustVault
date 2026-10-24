@@ -253,10 +253,18 @@ For the full 9-step evaluator demo walkthrough, refer to [docs/DEMO_SCRIPT.md](d
 
 ## 8. Live Deployment & Public Links
 
-- **Live Frontend URL:** *[Configured upon deployment]*
-- **Live Backend API URL:** *[Configured upon deployment]*
-- **API Health Check:** *[Configured upon deployment]/health*
+- **Live Public HTTPS Web App:** https://silent-peas-matter.loca.lt
+  *(For localtunnel verification prompt, enter tunnel password IP: `103.174.160.17`)*
+- **Direct Local Network (LAN) URL:** `http://192.168.1.72:4000` (Access from any smartphone or tablet connected to the local Wi-Fi)
+- **Local Fullstack Application:** `http://localhost:4000`
+- **Live Health Check Endpoint:** https://silent-peas-matter.loca.lt/health (returns `{"status":"healthy","service":"TrustVault Core API",...}`)
 - **Public GitHub Repository:** https://github.com/BandiKoteswaraRao/TrustVault
+
+### Cloud Deployment (Render Blueprint)
+TrustVault is fully configured for 1-click cloud deployment via `render.yaml`:
+1. Push repository to GitHub.
+2. In [Render Dashboard](https://dashboard.render.com), click **New +** -> **Blueprint**.
+3. Select `TrustVault` to provision the PostgreSQL 16 database and Node.js fullstack service automatically.
 
 Refer to [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for full deployment instructions on free-tier hosting (Render, Vercel, Neon).
 
