@@ -30,6 +30,8 @@ The tool executed environment diagnostic commands (`node -v`, `npm.cmd -v`, `git
 **Commit:**
 `f2f3d1a` — `chore: initialize TrustVault project structure, threat model, and foundation`
 
+---
+
 ## 2026-10-24 — Phase 2: Database Architecture, Migrations, and Dual-Mode Connection Pool
 
 **Prompt sent:**
@@ -53,6 +55,8 @@ The tool created `database/migrations/001_create_tables.sql`, `backend/src/confi
 
 **Commit:**
 `05182e2` — `feat(database): implement PostgreSQL migrations, schema, and connection pooling`
+
+---
 
 ## 2026-10-24 — Phase 3: Authentication, Rate Limiting, Normalized Identity & Audit-Linked Auth Events
 
@@ -89,6 +93,8 @@ All 10 tests passed:
 **Commit:**
 `a10a495` — `feat(auth): implement registration, bcrypt hashing, JWT auth, rate limiting, and security tests`
 
+---
+
 ## 2026-10-24 — Phase 4: Server-Enforced Authorization, BOLA/BFLA Prevention, and Immediate Revocation
 
 **Prompt sent:**
@@ -98,8 +104,8 @@ All 10 tests passed:
 The tool created `backend/src/services/fileStorageService.ts`, `backend/src/services/documentService.ts`, `backend/src/services/permissionService.ts`, `backend/src/middleware/upload.ts`, `backend/src/controllers/documentController.ts`, `backend/src/controllers/permissionController.ts`, `backend/src/routes/documentRoutes.ts`, and `backend/tests/security/authorization.test.ts`.
 
 **Problem discovered:**
-1. **Host Antivirus Quarantine during Security Testing:** In negative upload test 9, writing a test case with a literal PHP webshell string (`<?php system($_GET["cmd"]); ?>`) triggered Windows Defender's active file scanner, resulting in OS error `Operation did not complete successfully because the file contains a virus or potentially unwanted software`. This demonstrated that security test fixtures should test extension blocking with benign payload stubs rather than signature-matched live exploit vectors that trip host operating system endpoint protection.
-2. **Generic Error Names:** The centralized error handler returned `error: "Error"` for custom application exceptions because `new Error()` defaults `name` to `'Error'`, which caused HTTP 403 responses to lack descriptive REST standard types like `"Forbidden"`.
+1. **Host Antivirus Quarantine during Security Testing:** In negative upload testing, using an exploit string matching a known command injection payload triggered host antivirus file scanning on Windows, resulting in an OS file lock. This demonstrated that negative extension rejection tests should test extension and MIME rejection using harmless script buffers (`.sh`, `.exe`, `.bat`) rather than signature-matched active exploits.
+2. **Generic Error Names in Central Handler:** The centralized error handler returned `error: "Error"` for custom application exceptions because `new Error()` defaults `name` to `'Error'`, which caused HTTP 403 responses to lack descriptive REST standard types like `"Forbidden"`.
 3. **BFLA Vulnerability Surface:** A naive permission model could allow a document recipient (Bob) to view other grantees or share access with a third party (Charlie). The controller and service needed explicit owner-only assertions (`owner_id === actingUserId`) to prevent Broken Function-Level Authorization.
 
 **My correction:**
@@ -126,4 +132,4 @@ All 23 tests passed across `auth.test.ts` and `authorization.test.ts`:
 - `10. Prevents unauthenticated and unauthorized access to audit verification and logs` (Passed)
 
 **Commit:**
-Commit `6e93c12` (Pending Phase 4 commit)
+`bb52f71` — `feat(documents): implement private file storage, owner-only authorization, immediate revocation, and security tests`
