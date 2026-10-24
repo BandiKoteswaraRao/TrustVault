@@ -13,7 +13,7 @@ Launch the application using your preferred method:
 java -jar target\trustvault-1.0.0.jar
 
 # Method B: Maven boot run
-.\.tools\maven\bin\mvn.cmd spring-boot:run
+cmd.exe /c "set JAVA_HOME=C:\Program Files\Java\jdk-25&& .\.tools\maven\bin\mvn.cmd spring-boot:run"
 ```
 
 Open your browser to: **[http://localhost:8080](http://localhost:8080)**
@@ -26,9 +26,9 @@ The login screen features **1-Click Quick-Fill buttons** for all three roles:
 
 | Role | Username / Email | Password | Access Rights |
 | :--- | :--- | :--- | :--- |
-| **Admin** | `admin@trustvault.local` (or `admin`) | `Admin@TrustVault2026!` | View system audit trail, run cryptographic verification, inspect all documents |
-| **Document Owner (Alice)** | `owner@trustvault.local` (or `alice_owner`) | `Owner@TrustVault2026!` | Upload documents, edit metadata, grant/revoke permissions to collaborators |
-| **Viewer (Bob)** | `viewer@trustvault.local` (or `bob_viewer`) | `Viewer@TrustVault2026!` | View and download documents explicitly shared with him; cannot upload or edit |
+| **Admin** | `admin@trustvault.local` (or `admin`) | `Admin@TrustVault2026!` | View system audit trail, run cryptographic verification, inspect all documents, manage users |
+| **Document Owner (Alice)** | `owner@trustvault.local` (or `alice_owner`) | `Owner@TrustVault2026!` | Upload documents, edit metadata, grant/revoke permissions to collaborators, manage profile |
+| **Viewer (Bob)** | `viewer@trustvault.local` (or `bob_viewer`) | `Viewer@TrustVault2026!` | View and download documents explicitly shared with him; cannot upload, edit, or delete |
 
 ---
 
@@ -97,15 +97,30 @@ The login screen features **1-Click Quick-Fill buttons** for all three roles:
 
 ---
 
-### Scenario E: Automated Security Test Suite Verification
-Run the 18 automated integration tests to prove authorization, IDOR protection, upload sanitization, and tamper detection:
+### Scenario E: User Profile & Administrative Management
+1. Sign in as **Alice** (`owner@trustvault.local`).
+2. Click **Profile** in the top navigation bar (`/profile`):
+   - Update display name to `"Alice Smith"` and save.
+   - Click **Change Password** (`/profile/password`):
+     - Test wrong current password -> Rejected with validation error.
+     - Supply valid credentials -> Password updated and sealed into cryptographic audit log.
+3. Sign in as **Admin** (`admin@trustvault.local`).
+4. Click **Users** (`/admin/users`):
+   - Toggle account status for Bob -> Bob's account is suspended.
+   - Verify Bob is prevented from logging in.
+   - Reactivate Bob's account.
+
+---
+
+### Scenario F: Automated Security Test Suite Verification
+Run the 27 automated integration tests to prove authorization, IDOR protection, upload sanitization, profile security, and tamper detection:
 
 ```powershell
-.\.tools\maven\bin\mvn.cmd test
+cmd.exe /c "set JAVA_HOME=C:\Program Files\Java\jdk-25&& .\.tools\maven\bin\mvn.cmd test"
 ```
 
 Expected output:
 ```
-[INFO] Tests run: 18, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Tests run: 27, Failures: 0, Errors: 0, Skipped: 0
 [INFO] BUILD SUCCESS
 ```

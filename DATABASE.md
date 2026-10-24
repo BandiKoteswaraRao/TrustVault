@@ -1,6 +1,6 @@
 # TrustVault — Database Architecture & Schema Specification
 
-TrustVault supports both **MySQL 8.0+ / 26.x** for production environments and an **In-Memory H2 Engine (in MySQL compatibility mode)** for rapid, zero-configuration local development and automated testing.
+TrustVault supports **PostgreSQL 15+ / Supabase** and **MySQL 8.0+ / 26.x** for production environments, alongside an **In-Memory H2 Engine** for rapid, zero-configuration local development and automated testing.
 
 ---
 
