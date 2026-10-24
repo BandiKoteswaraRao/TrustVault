@@ -69,8 +69,6 @@ This log records the genuine, chronological development prompts, technical decis
   - `DocumentService.getDocumentForViewing` was annotated with `@Transactional(readOnly = true)`.
   - When an unauthorized viewer attempted to access another user's document, `auditService.recordEvent(..., ACCESS_DENIED, ...)` was called, followed immediately by `throw new SecurityException(...)`.
   - Spring's transaction interceptor rolled back the entire transaction upon catching `SecurityException`, inadvertently discarding the critical `ACCESS_DENIED` security audit entry from the database.
-* **Mitigation & Fix:**
-  - Reconfigured `AuditService.recordEvent()` with `@Transactional(propagation = Propagation.REQUIRES_NEW)`.
-  - `Propagation.REQUIRES_NEW` suspends the ambient business transaction and opens an autonomous transaction that commits immediately.
-  - Even if the calling method throws a runtime `SecurityException` or rolls back, the security violation event remains immutably recorded in the cryptographic audit trail.
+* **Verification & Git Commit:**
   - Verified by `DocumentAccessSecurityTests.testBobCannotViewAlicesDocument` passing with 100% assertion success.
+  - Implemented in commit [`993269d`](https://github.com/BandiKoteswaraRao/TrustVault/commit/993269d) (`feat: complete TrustVault full-stack secure document sharing with tamper-evident audit trail`).
