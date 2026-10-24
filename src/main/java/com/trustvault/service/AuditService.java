@@ -147,6 +147,32 @@ public class AuditService {
         auditLogRepository.save(log);
     }
 
+    @Transactional
+    public Long simulateTamperLatest() {
+        List<AuditLog> all = auditLogRepository.findAllByOrderByIdAsc();
+        if (all.isEmpty()) {
+            return null;
+        }
+        AuditLog target = all.size() > 1 ? all.get(1) : all.get(0);
+        target.setDetails("MALICIOUS_INJECTION: Unauthorized direct SQL manipulation detected at " + System.currentTimeMillis());
+        auditLogRepository.save(target);
+        return target.getId();
+    }
+
+    @Transactional
+    public void recalculateAndRepairChain() {
+        List<AuditLog> all = auditLogRepository.findAllByOrderByIdAsc();
+        String prevHash = AuditLog.GENESIS_HASH;
+        for (AuditLog log : all) {
+            log.setPreviousHash(prevHash);
+            String payload = log.toCanonicalPayload();
+            String hash = calculateSha256(payload);
+            log.setCurrentHash(hash);
+            prevHash = hash;
+            auditLogRepository.save(log);
+        }
+    }
+
     /**
      * Simulates record deletion for test verification of broken chain detection.
      */

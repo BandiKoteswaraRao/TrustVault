@@ -38,14 +38,66 @@
                 </div>
             </div>
 
-            <div>
+            <!-- Action Buttons: Verify, Tamper Simulation, Repair -->
+            <div class="flex flex-wrap items-center gap-2">
                 <form th:action="@{/audit/verify}" method="post" class="inline m-0">
                     <button type="submit"
-                            class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white font-bold text-xs shadow-lg shadow-cyan-600/25 transition-all hover:scale-105 active:scale-95">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                        Verify Full Chain Integrity
+                            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white font-bold text-xs shadow-lg shadow-cyan-600/25 transition-all hover:scale-105 active:scale-95">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                        Verify Chain Integrity
                     </button>
                 </form>
+
+                <form th:action="@{/audit/simulate-tamper}" method="post" class="inline m-0">
+                    <button type="submit"
+                            class="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-rose-950/70 hover:bg-rose-900 border border-rose-600/70 text-rose-300 font-bold text-xs transition-all hover:scale-105 active:scale-95 shadow-sm"
+                            title="Directly alters a database row to simulate unauthorized SQL manipulation">
+                        <span>⚠️</span>
+                        <span>Simulate DB Tampering</span>
+                    </button>
+                </form>
+
+                <form th:action="@{/audit/repair-chain}" method="post" class="inline m-0">
+                    <button type="submit"
+                            class="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-emerald-950/70 hover:bg-emerald-900 border border-emerald-600/70 text-emerald-300 font-bold text-xs transition-all hover:scale-105 active:scale-95 shadow-sm"
+                            title="Recalculates SHA-256 digests and seals the ledger">
+                        <span>🛡️</span>
+                        <span>Repair &amp; Re-Seal</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Interactive Visual Chain Concept Banner -->
+        <div class="mt-5 pt-4 border-t border-gray-800/80">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-gray-400 block mb-2">
+                ⛓️ Cryptographic Hash Chaining Mechanism
+            </span>
+            <div class="flex items-center gap-2 overflow-x-auto pb-2 text-[11px] font-mono">
+                <div class="shrink-0 p-2 rounded-lg bg-gray-950 border border-gray-800 text-gray-400">
+                    <span class="text-[10px] text-cyan-400 font-bold block">GENESIS ROOT</span>
+                    <span>0000000000000000...</span>
+                </div>
+                <span class="text-cyan-400 font-bold">&rarr;</span>
+                <div class="shrink-0 p-2 rounded-lg bg-gray-950 border border-gray-800 text-gray-300">
+                    <span class="text-[10px] text-indigo-400 font-bold block">BLOCK #0 (USER_CREATED)</span>
+                    <span class="text-xs text-gray-400">H0 = SHA256(Data0 + Genesis)</span>
+                </div>
+                <span class="text-cyan-400 font-bold">&rarr;</span>
+                <div class="shrink-0 p-2 rounded-lg bg-gray-950 border border-gray-800 text-gray-300">
+                    <span class="text-[10px] text-blue-400 font-bold block">BLOCK #1 (DOC_UPLOADED)</span>
+                    <span class="text-xs text-gray-400">H1 = SHA256(Data1 + H0)</span>
+                </div>
+                <span class="text-cyan-400 font-bold">&rarr;</span>
+                <div class="shrink-0 p-2 rounded-lg bg-gray-950 border border-gray-800 text-gray-300">
+                    <span class="text-[10px] text-emerald-400 font-bold block">BLOCK #2 (PERM_GRANTED)</span>
+                    <span class="text-xs text-gray-400">H2 = SHA256(Data2 + H1)</span>
+                </div>
+                <span class="text-cyan-400 font-bold">&rarr;</span>
+                <div class="shrink-0 p-2 rounded-lg bg-indigo-950/40 border border-indigo-700/60 text-indigo-200">
+                    <span class="text-[10px] text-cyan-300 font-bold block">LATEST BLOCK #N</span>
+                    <span class="text-xs text-cyan-400">Hn = SHA256(DataN + Hn-1)</span>
+                </div>
             </div>
         </div>
     </div>

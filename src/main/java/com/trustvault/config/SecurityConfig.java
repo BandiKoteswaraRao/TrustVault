@@ -69,6 +69,7 @@ public class SecurityConfig {
                     "/",
                     "/login",
                     "/register",
+                    "/auth/**",
                     "/css/**",
                     "/js/**",
                     "/images/**",

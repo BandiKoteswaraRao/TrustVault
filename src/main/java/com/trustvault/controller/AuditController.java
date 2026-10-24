@@ -89,6 +89,24 @@ public class AuditController {
         return "redirect:/audit";
     }
 
+    @PostMapping("/simulate-tamper")
+    public String simulateTamper(RedirectAttributes redirectAttributes) {
+        Long id = auditService.simulateTamperLatest();
+        if (id != null) {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "⚠️ Tamper Simulation Executed: Record #" + id + " details were directly altered in the database table! The SHA-256 hash was NOT updated. Click 'Verify Full Chain Integrity' now to observe the cryptographic breach detection!");
+        }
+        return "redirect:/audit";
+    }
+
+    @PostMapping("/repair-chain")
+    public String repairChain(RedirectAttributes redirectAttributes) {
+        auditService.recalculateAndRepairChain();
+        redirectAttributes.addFlashAttribute("successMessage",
+                "🛡️ Cryptographic audit chain successfully re-calculated and re-sealed! All blocks are now cryptographically valid.");
+        return "redirect:/audit";
+    }
+
     @GetMapping("/verify-json")
     @ResponseBody
     public AuditVerificationReport verifyChainJson() {
