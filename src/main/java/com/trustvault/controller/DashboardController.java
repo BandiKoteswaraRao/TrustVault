@@ -3,6 +3,8 @@ package com.trustvault.controller;
 import com.trustvault.dto.AuditVerificationReport;
 import com.trustvault.model.Role;
 import com.trustvault.model.User;
+import com.trustvault.repository.DocumentPermissionRepository;
+import com.trustvault.repository.DocumentRepository;
 import com.trustvault.security.SecurityUtils;
 import com.trustvault.service.AuditService;
 import com.trustvault.service.DocumentService;
@@ -18,15 +20,21 @@ public class DashboardController {
     private final DocumentService documentService;
     private final UserService userService;
     private final AuditService auditService;
+    private final DocumentRepository documentRepository;
+    private final DocumentPermissionRepository permissionRepository;
 
     public DashboardController(SecurityUtils securityUtils,
                                DocumentService documentService,
                                UserService userService,
-                               AuditService auditService) {
+                               AuditService auditService,
+                               DocumentRepository documentRepository,
+                               DocumentPermissionRepository permissionRepository) {
         this.securityUtils = securityUtils;
         this.documentService = documentService;
         this.userService = userService;
         this.auditService = auditService;
+        this.documentRepository = documentRepository;
+        this.permissionRepository = permissionRepository;
     }
 
     @GetMapping("/")
@@ -44,10 +52,18 @@ public class DashboardController {
 
         model.addAttribute("currentUser", currentUser);
 
-        // Common metrics
+        // Common metrics for all roles
         var accessibleDocs = documentService.getAccessibleDocuments(currentUser, null, null);
         model.addAttribute("accessibleDocs", accessibleDocs);
         model.addAttribute("accessibleDocsCount", accessibleDocs.size());
+
+        long ownedDocsCount = documentRepository.countByOwner(currentUser);
+        long sharedDocsCount = permissionRepository.countByUser(currentUser);
+        model.addAttribute("ownedDocsCount", ownedDocsCount);
+        model.addAttribute("sharedDocsCount", sharedDocsCount);
+
+        AuditVerificationReport report = auditService.verifyChainIntegrity();
+        model.addAttribute("chainReport", report);
 
         if (currentUser.getRole() == Role.ROLE_ADMIN) {
             model.addAttribute("totalUsers", userService.getTotalUserCount());
@@ -55,10 +71,6 @@ public class DashboardController {
             model.addAttribute("totalAudits", auditService.getTotalAuditCount());
             model.addAttribute("securityViolations", auditService.getSecurityViolationsCount());
             model.addAttribute("recentLogs", auditService.getRecentLogs());
-
-            // Real-time audit chain verification check
-            AuditVerificationReport report = auditService.verifyChainIntegrity();
-            model.addAttribute("chainReport", report);
         }
 
         return "dashboard/index";

@@ -7,23 +7,16 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
-<body class="bg-[#0b0f19] text-gray-100 min-h-screen flex items-center justify-center p-4">
+<body class="bg-[#050807] text-[#f0fdf4] min-h-screen flex items-center justify-center p-4">
 
     <div class="max-w-md w-full text-center">
-        <div class="inline-flex w-16 h-16 rounded-2xl bg-gray-900 border border-gray-800 p-1 mb-4 items-center justify-center">
-            <svg class="w-8 h-8 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-            </svg>
-        </div>
-
-        <h1 class="text-3xl font-extrabold text-white">500</h1>
-        <p class="text-xs uppercase tracking-widest text-rose-400 font-bold mt-1">Internal Server Error</p>
-        <p class="text-sm text-gray-400 mt-2" th:text="${errorMessage}">A server-side event occurred.</p>
+        <h1 class="text-4xl font-extrabold text-rose-400">500</h1>
+        <h2 class="text-xl font-bold text-white mt-2">Internal Service Exception</h2>
+        <p class="text-xs text-gray-400 mt-2">An unexpected server exception occurred. The incident context has been recorded safely.</p>
 
         <div class="mt-6">
-            <a th:href="@{/dashboard}"
-               class="inline-block py-2.5 px-6 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs shadow-md shadow-blue-600/30 transition-all">
-                Return to Dashboard
+            <a th:href="@{/dashboard}" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm transition-all inline-block">
+                Back to Dashboard
             </a>
         </div>
     </div>

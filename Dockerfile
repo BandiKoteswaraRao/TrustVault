@@ -31,7 +31,7 @@ COPY --from=build /app/target/trustvault-1.0.0.jar app.jar
 
 EXPOSE 8080
 
-ENV SPRING_PROFILES_ACTIVE=mysql \
+ENV SPRING_PROFILES_ACTIVE=default \
     JAVA_OPTS="-XX:+UseG1GC -XX:MaxRAMPercentage=75.0"
 
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]

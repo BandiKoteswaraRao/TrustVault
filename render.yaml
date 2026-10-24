@@ -1,0 +1,33 @@
+services:
+  - type: web
+    name: trustvault
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    region: oregon
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: PORT
+        value: 8080
+      - key: SPRING_PROFILES_ACTIVE
+        value: default
+      - key: TRUSTVAULT_SECURITY_BCRYPT_STRENGTH
+        value: 12
+      # To connect to external Supabase PostgreSQL & Storage:
+      # Change SPRING_PROFILES_ACTIVE to 'postgres' (or 'supabase')
+      # and supply your Supabase credentials in the Render Dashboard:
+      # - key: SPRING_PROFILES_ACTIVE
+      #   value: postgres
+      # - key: SUPABASE_DB_URL
+      #   sync: false
+      # - key: SUPABASE_DB_USER
+      #   sync: false
+      # - key: SUPABASE_DB_PASSWORD
+      #   sync: false
+      # - key: SUPABASE_URL
+      #   sync: false
+      # - key: SUPABASE_SERVICE_ROLE_KEY
+      #   sync: false
+      # - key: SUPABASE_STORAGE_BUCKET
+      #   value: trustvault-documents

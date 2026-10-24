@@ -17,17 +17,17 @@
 
         <div class="flex items-center gap-2">
             <a th:if="${canShare}" th:href="@{'/documents/' + ${document.id} + '/share'}"
-               class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium transition-colors">
+               class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white text-xs font-medium transition-colors">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
                 Manage Access
             </a>
             <a th:if="${canEdit}" th:href="@{'/documents/' + ${document.id} + '/edit'}"
-               class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-medium transition-colors">
+               class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#0f241c] hover:bg-[#16382a] text-emerald-300 border border-[#1a382d] text-xs font-medium transition-colors">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                 Edit
             </a>
             <form th:if="${canDelete}" th:action="@{'/documents/' + ${document.id} + '/delete'}" method="post"
-                  onsubmit="return confirm('Are you sure you want to permanently delete this document and its audit record? This cannot be undone.');" class="inline m-0">
+                  onsubmit="return confirm('Are you sure you want to permanently delete this document? This action is logged.');" class="inline m-0">
                 <button type="submit"
                         class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-600/80 hover:bg-rose-600 text-white text-xs font-medium transition-colors">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
@@ -38,10 +38,10 @@
     </div>
 
     <!-- Document Info Card -->
-    <div class="glass-panel rounded-2xl border border-gray-800 p-6 sm:p-8 space-y-6">
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-gray-800 pb-6">
+    <div class="glass-panel rounded-2xl border border-[#1a382d] p-6 sm:p-8 space-y-6">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[#1a382d] pb-6">
             <div>
-                <span class="px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-blue-950/70 border border-blue-800 text-blue-300"
+                <span class="px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-emerald-950/70 border border-emerald-800 text-emerald-300"
                       th:text="${document.category}">Category</span>
                 <h1 class="text-2xl font-bold text-white mt-2" th:text="${document.title}">Document Title</h1>
                 <p class="text-sm text-gray-400 mt-1" th:text="${document.description != null and !document.description.isBlank() ? document.description : 'No description provided.'}">Description</p>
@@ -49,7 +49,7 @@
 
             <div>
                 <a th:href="@{'/documents/' + ${document.id} + '/download'}"
-                   class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm shadow-lg shadow-blue-600/30 transition-all hover:scale-[1.02]">
+                   class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm shadow-lg shadow-emerald-950/40 transition-all hover:scale-[1.02]">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                     Download Secure File
                 </a>
@@ -58,17 +58,17 @@
 
         <!-- Metadata Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-            <div class="bg-gray-950/60 p-4 rounded-xl border border-gray-800/80">
+            <div class="bg-[#07110d] p-4 rounded-xl border border-[#1a382d]">
                 <span class="text-gray-500 uppercase font-semibold tracking-wider text-[10px]">Original Filename</span>
                 <p class="font-mono text-gray-200 mt-1 truncate" th:text="${document.originalFileName}">report.pdf</p>
             </div>
 
-            <div class="bg-gray-950/60 p-4 rounded-xl border border-gray-800/80">
+            <div class="bg-[#07110d] p-4 rounded-xl border border-[#1a382d]">
                 <span class="text-gray-500 uppercase font-semibold tracking-wider text-[10px]">Document Owner</span>
                 <p class="text-gray-200 mt-1 font-medium" th:text="${document.owner.fullName} + ' (' + ${document.owner.email} + ')'">Owner Name</p>
             </div>
 
-            <div class="bg-gray-950/60 p-4 rounded-xl border border-gray-800/80">
+            <div class="bg-[#07110d] p-4 rounded-xl border border-[#1a382d]">
                 <span class="text-gray-500 uppercase font-semibold tracking-wider text-[10px]">File Size &amp; MIME Type</span>
                 <p class="font-mono text-gray-200 mt-1">
                     <span th:text="${#numbers.formatDecimal(document.fileSize / 1024.0, 1, 1)} + ' KB'">120 KB</span>
@@ -77,59 +77,56 @@
                 </p>
             </div>
 
-            <div class="bg-gray-950/60 p-4 rounded-xl border border-gray-800/80">
+            <div class="bg-[#07110d] p-4 rounded-xl border border-[#1a382d]">
                 <span class="text-gray-500 uppercase font-semibold tracking-wider text-[10px]">Uploaded At</span>
                 <p class="font-mono text-gray-200 mt-1" th:text="${#temporals.format(document.createdAt, 'yyyy-MM-dd HH:mm:ss')}">2026-10-24 12:00:00</p>
             </div>
         </div>
 
         <!-- Cryptographic File Hash Box -->
-        <div class="bg-gray-950/80 p-4 rounded-xl border border-gray-800">
+        <div class="bg-[#07110d] p-4 rounded-xl border border-[#1a382d]">
             <div class="flex items-center justify-between mb-1.5">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-cyan-400 flex items-center gap-1.5">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                     File Content SHA-256 Digest
                 </span>
-                <button type="button" class="copy-hash text-[11px] text-gray-400 hover:text-white" th:data-hash="${document.fileHash}">Copy Digest</button>
+                <button type="button" class="copy-hash text-[11px] text-gray-400 hover:text-emerald-300" th:data-hash="${document.fileHash}">Copy Digest</button>
             </div>
-            <div class="font-mono text-xs text-blue-300 break-all select-all" th:text="${document.fileHash}">000...</div>
-            <p class="text-[10px] text-gray-500 mt-1.5">This SHA-256 hash was generated at upload time and is recorded in the immutable audit trail.</p>
+            <div class="font-mono text-xs text-emerald-300 break-all select-all" th:text="${document.fileHash}">000...</div>
+            <p class="text-[10px] text-gray-500 mt-1.5">This SHA-256 hash was generated at upload time and is sealed in the tamper-evident audit trail.</p>
         </div>
 
         <!-- Access Permissions List -->
-        <div class="border-t border-gray-800 pt-6">
+        <div class="border-t border-[#1a382d] pt-6">
             <div class="flex items-center justify-between mb-3">
-                <h3 class="text-sm font-bold uppercase tracking-wider text-gray-300">Active Access Permissions</h3>
-                <a th:if="${canShare}" th:href="@{'/documents/' + ${document.id} + '/share'}" class="text-xs text-indigo-400 hover:text-indigo-300 font-medium">+ Add or Modify</a>
+                <h3 class="text-xs font-bold uppercase tracking-wider text-gray-300">Smart Access Permissions</h3>
+                <a th:if="${canShare}" th:href="@{'/documents/' + ${document.id} + '/share'}" class="text-xs text-emerald-400 hover:text-emerald-300 font-medium">Manage Permissions &rarr;</a>
             </div>
 
-            <div th:if="${#lists.isEmpty(permissions)}" class="text-xs text-gray-500 py-3">
-                This document is private to its owner. No other users have been granted explicit access.
+            <div th:if="${#lists.isEmpty(permissions)}" class="text-xs text-gray-500 italic py-2">
+                No external collaborators granted access. Only the owner and administrators can access this file.
             </div>
 
             <div th:unless="${#lists.isEmpty(permissions)}" class="overflow-x-auto">
                 <table class="w-full text-left text-xs">
                     <thead>
-                        <tr class="border-b border-gray-800 text-gray-500 uppercase tracking-wider">
-                            <th class="py-2 px-2">Authorized User</th>
-                            <th class="py-2 px-2">Permission Level</th>
-                            <th class="py-2 px-2">Granted By</th>
-                            <th class="py-2 px-2">Granted At</th>
+                        <tr class="border-b border-[#1a382d] text-gray-400 uppercase tracking-wider">
+                            <th class="py-2 px-3">Collaborator</th>
+                            <th class="py-2 px-3">Permission Level</th>
+                            <th class="py-2 px-3">Granted By</th>
+                            <th class="py-2 px-3">Granted At</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-800/60 text-gray-300">
-                        <tr th:each="perm : ${permissions}">
-                            <td class="py-2 px-2">
-                                <span class="font-medium text-gray-200" th:text="${perm.user.fullName}">Name</span>
-                                <span class="text-gray-500 font-mono text-[11px] ml-1" th:text="'(' + ${perm.user.email} + ')'"></span>
-                            </td>
-                            <td class="py-2 px-2">
+                    <tbody class="divide-y divide-[#1a382d]/60 text-gray-300">
+                        <tr th:each="p : ${permissions}" class="hover:bg-[#0f2119]/40">
+                            <td class="py-2.5 px-3 font-medium text-gray-200" th:text="${p.user.fullName} + ' (' + ${p.user.email} + ')'">User</td>
+                            <td class="py-2.5 px-3">
                                 <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider"
-                                      th:classappend="${perm.permissionType.name() == 'EDIT' ? 'bg-amber-950/70 text-amber-300 border border-amber-800' : 'bg-blue-950/70 text-blue-300 border border-blue-800'}"
-                                      th:text="${perm.permissionType}">READ</span>
+                                      th:classappend="${p.permissionType.name() == 'EDIT' ? 'bg-amber-950/70 text-amber-300 border border-amber-800' : 'bg-emerald-950/70 text-emerald-300 border border-emerald-800'}"
+                                      th:text="${p.permissionType}">READ</span>
                             </td>
-                            <td class="py-2 px-2 text-gray-400" th:text="${perm.grantedBy.username}"></td>
-                            <td class="py-2 px-2 font-mono text-gray-500" th:text="${#temporals.format(perm.grantedAt, 'yyyy-MM-dd HH:mm')}"></td>
+                            <td class="py-2.5 px-3 text-gray-400" th:text="${p.grantedBy.username}">owner</td>
+                            <td class="py-2.5 px-3 font-mono text-gray-400" th:text="${#temporals.format(p.grantedAt, 'yyyy-MM-dd HH:mm')}">2026-10-24</td>
                         </tr>
                     </tbody>
                 </table>

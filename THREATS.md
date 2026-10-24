@@ -42,6 +42,21 @@ This document provides a comprehensive security assessment of **TrustVault**, de
 * **Mitigation:**
   Permissions are not stored as static claims in client cookies or JWTs. Instead, every protected request verifies the live relationship in the database via `DocumentPermissionRepository.findByDocumentAndUser()`. When an owner calls `revokePermission()`, the row is deleted immediately, and the recipient is blocked on their very next HTTP request.
 
+### 2.5 Insecure Password Changes & Profile Modification
+* **Attack Scenario:** An attacker who encounters an unattended browser session or sends a forged request attempts to change the victim's account password.
+* **Mitigation:**
+  `UserService.changePassword` enforces verification of the user's `currentPassword` using `PasswordEncoder.matches()` before applying any update. CSRF tokens are strictly validated on `POST /profile` and `POST /profile/password`. New password and confirmation must match and satisfy strong password requirements. All password and profile change events are sealed in the cryptographic audit trail (`PASSWORD_CHANGE`, `USER_UPDATE`).
+
+### 2.6 Account Suspension & Role Management Defenses
+* **Attack Scenario:** A compromised user account continues to access documents or an attacker attempts to elevate privileges.
+* **Mitigation:**
+  Admins can suspend accounts instantly via `AdminUserController` (`/admin/users/{id}/toggle-status`). `CustomUserDetailsService` checks `user.isActive()` on every login attempt, rejecting suspended accounts with `DisabledException`. Self-deactivation or self-demotion is blocked in `UserService` to prevent administrative lockout. All role and status changes are captured in the tamper-evident audit log (`USER_ROLE_CHANGE`, `USER_STATUS_CHANGE`).
+
+### 2.7 Cloud Storage Exfiltration (Supabase Private Bucket)
+* **Attack Scenario:** An external attacker accesses confidential documents directly via guessed Supabase storage URLs.
+* **Mitigation:**
+  TrustVault mandates that the `trustvault-documents` Supabase bucket remains strictly **Private**. No public download policies are granted. Files are retrieved through server-side authenticated streaming using the backend `SUPABASE_SERVICE_ROLE_KEY`. Client browsers never receive direct public URLs or privileged Supabase API tokens.
+
 ---
 
 ## 3. Residual & Accepted Risks

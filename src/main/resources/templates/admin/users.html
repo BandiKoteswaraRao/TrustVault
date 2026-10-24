@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{layout/main :: layout(~{::title}, ~{::content})}">
+<head>
+    <title>User Management — TrustVault Admin</title>
+</head>
+<body>
+<div th:fragment="content" class="space-y-6">
+
+    <!-- Header Row -->
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-white flex items-center gap-2">
+                <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                Administrative User Management
+            </h1>
+            <p class="text-xs text-gray-400 mt-1">
+                Oversee vault users, enforce access suspension, and manage role clearances
+            </p>
+        </div>
+        <div class="flex items-center gap-2">
+            <span class="text-xs font-mono text-emerald-400 bg-emerald-950/60 border border-emerald-800/60 px-3 py-1.5 rounded-xl">
+                Total Accounts: <strong th:text="${#lists.size(users)}">0</strong>
+            </span>
+        </div>
+    </div>
+
+    <!-- Users Table Card -->
+    <div class="glass-panel rounded-2xl border border-[#1a382d] p-6">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+                <thead>
+                    <tr class="border-b border-[#1a382d] text-gray-400 uppercase tracking-wider">
+                        <th class="py-3 px-3">User &amp; Username</th>
+                        <th class="py-3 px-3">Email Address</th>
+                        <th class="py-3 px-3">Role Clearance</th>
+                        <th class="py-3 px-3">Account Status</th>
+                        <th class="py-3 px-3">Created Date</th>
+                        <th class="py-3 px-3 text-right">Administrative Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-[#1a382d]/70 text-gray-300">
+                    <tr th:each="u : ${users}" class="hover:bg-[#0f2119]/40 transition-colors">
+                        <td class="py-3 px-3">
+                            <div class="font-bold text-sm text-emerald-200" th:text="${u.fullName}">User Full Name</div>
+                            <div class="text-[11px] text-gray-500 font-mono" th:text="'@' + ${u.username}">@user</div>
+                        </td>
+                        <td class="py-3 px-3 font-mono text-gray-300" th:text="${u.email}">user@trustvault.local</td>
+                        <td class="py-3 px-3">
+                            <span class="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider"
+                                  th:classappend="${u.role.name() == 'ROLE_ADMIN' ? 'bg-rose-950/70 text-rose-300 border border-rose-800' :
+                                                   u.role.name() == 'ROLE_OWNER' ? 'bg-emerald-950/70 text-emerald-300 border border-emerald-800' :
+                                                   'bg-teal-950/70 text-teal-300 border border-teal-800'}"
+                                  th:text="${u.role.name().replace('ROLE_', '')}">ADMIN</span>
+                        </td>
+                        <td class="py-3 px-3">
+                            <span th:if="${u.enabled}" class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-950/80 text-emerald-300 border border-emerald-800">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Active
+                            </span>
+                            <span th:unless="${u.enabled}" class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-rose-950/80 text-rose-300 border border-rose-800">
+                                <span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span> Suspended
+                            </span>
+                        </td>
+                        <td class="py-3 px-3 font-mono text-gray-400" th:text="${#temporals.format(u.createdAt, 'yyyy-MM-dd HH:mm')}">2026-10-24</td>
+                        <td class="py-3 px-3 text-right">
+                            <div class="inline-flex items-center gap-2">
+                                <!-- Role Change Form -->
+                                <form th:if="${!u.id.equals(currentUser.id)}" th:action="@{'/admin/users/' + ${u.id} + '/role'}" method="post" class="inline m-0">
+                                    <select name="role" onchange="this.form.submit()"
+                                            class="px-2 py-1 rounded-lg bg-[#07110d] border border-[#1a382d] text-[11px] text-gray-300 focus:border-emerald-500 outline-none">
+                                        <option th:each="r : ${roles}" th:value="${r}" th:selected="${r == u.role}" th:text="${r.name().replace('ROLE_', '')}">ROLE</option>
+                                    </select>
+                                </form>
+
+                                <!-- Toggle Enable/Disable Status -->
+                                <form th:if="${!u.id.equals(currentUser.id)}" th:action="@{'/admin/users/' + ${u.id} + '/toggle-status'}" method="post" class="inline m-0">
+                                    <button type="submit"
+                                            th:classappend="${u.enabled ? 'bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 border-rose-800' : 'bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 border-emerald-800'}"
+                                            class="px-2.5 py-1 rounded-lg text-[11px] font-medium border transition-colors"
+                                            th:text="${u.enabled ? 'Suspend' : 'Activate'}">
+                                        Suspend
+                                    </button>
+                                </form>
+
+                                <span th:if="${u.id.equals(currentUser.id)}" class="text-[11px] text-gray-500 italic">Current Session</span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

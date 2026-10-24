@@ -26,4 +26,6 @@ public interface DocumentPermissionRepository extends JpaRepository<DocumentPerm
     void deleteByDocumentAndUser(Document document, User user);
 
     void deleteByDocument(Document document);
+
+    long countByUser(User user);
 }

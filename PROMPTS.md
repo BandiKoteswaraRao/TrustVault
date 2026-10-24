@@ -72,3 +72,35 @@ This log records the genuine, chronological development prompts, technical decis
 * **Verification & Git Commit:**
   - Verified by `DocumentAccessSecurityTests.testBobCannotViewAlicesDocument` passing with 100% assertion success.
   - Implemented in commit [`993269d`](https://github.com/BandiKoteswaraRao/TrustVault/commit/993269d) (`feat: complete TrustVault full-stack secure document sharing with tamper-evident audit trail`).
+
+---
+
+## Session 2: Enterprise 24/7 Deployment, Black & Emerald UI, Supabase Storage & RBAC Enhancements
+
+### Prompt Input
+> "soo build aa complete website that nneds to work everytime when u opne online 24/7 and this proejct push intlo my repository"
+
+### Engineering Actions & Enhancements Delivered
+1. **Dynamic Port Binding & Cloud Health Monitoring:**
+   - Implemented dynamic port mapping via `server.port=${PORT:8080}` for automatic Render cloud container binding.
+   - Added Spring Boot Actuator (`spring-boot-starter-actuator`) and dedicated `HealthCheckController` exposing `/health` for Render zero-downtime healthcheck pings.
+   - Authored `render.yaml` Blueprint specification for 1-click zero-downtime deployment.
+
+2. **Supabase Cloud Database & Storage Integration:**
+   - Added PostgreSQL 42.7.4 dependency and created `application-postgres.properties` & `application-supabase.properties`.
+   - Engineered `StorageService` using Java standard `HttpURLConnection` targeting private bucket `trustvault-documents` via Supabase REST API with zero-config local storage fallback (`storage/uploads/`).
+
+3. **User Profile & Administrative Management:**
+   - Added `ProfileController` (`/profile`, `/profile/password`) for updating user details and secure password change with verification of old password.
+   - Added `AdminUserController` (`/admin/users`) enabling administrators to view users, suspend/reactivate accounts, and promote/demote roles.
+   - Extended cryptographic audit trail with new actions: `PASSWORD_CHANGE`, `USER_UPDATE`, `USER_ROLE_CHANGE`, `USER_STATUS_CHANGE`.
+
+4. **Black & Emerald-Green Theme Design Overhaul:**
+   - Complete modernization of CSS (`app.css`) and JavaScript (`app.js`) with an obsidian/black backdrop (`#050807`) and vibrant emerald accents (`#10b981`, `#059669`).
+   - Overhauled all 14 Thymeleaf templates (`layout/main.html`, `dashboard/index.html`, `documents/*.html`, `audit/list.html`, `auth/*.html`, `profile/*.html`, `admin/*.html`, `error/*.html`).
+
+5. **Security & Integration Verification (27/27 Tests Passing):**
+   - Added `UserManagementAndProfileSecurityTests.java` covering healthcheck, profile updates, password validations, and administrative authorization blocks.
+   - Resolved Java 25 Mockito inline mock maker constraint using `mock-maker-subclass`.
+   - Full test suite passed with `BUILD SUCCESS` (27/27 tests passed).
+

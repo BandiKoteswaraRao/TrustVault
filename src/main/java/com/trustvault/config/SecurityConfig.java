@@ -69,7 +69,9 @@ public class SecurityConfig {
                     "/",
                     "/login",
                     "/register",
-                    "/auth/**",
+                    "/health",
+                    "/actuator/health",
+                    "/actuator/info",
                     "/css/**",
                     "/js/**",
                     "/images/**",
@@ -81,6 +83,8 @@ public class SecurityConfig {
                 .requestMatchers("/documents/upload").hasAnyRole("ADMIN", "OWNER")
                 .requestMatchers("/documents/**").authenticated()
                 .requestMatchers("/dashboard/**").authenticated()
+                .requestMatchers("/profile/**").authenticated()
+                .requestMatchers("/auth/switch-persona").authenticated()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
@@ -103,7 +107,7 @@ public class SecurityConfig {
             )
             .sessionManagement(session -> session
                 .sessionFixation().changeSessionId()
-                .maximumSessions(3)
+                .maximumSessions(5)
                 .maxSessionsPreventsLogin(false)
             );
 

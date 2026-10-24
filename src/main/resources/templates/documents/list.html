@@ -12,8 +12,8 @@
     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
             <h1 class="text-2xl font-bold text-white flex items-center gap-2">
-                <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                Document Vault
+                <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                Secure Document Vault
             </h1>
             <p class="text-xs text-gray-400 mt-1">
                 Zero-Trust Document Repository with Server-Side Authorization &amp; IDOR Protection
@@ -22,7 +22,7 @@
 
         <div sec:authorize="hasAnyRole('ADMIN', 'OWNER')">
             <a th:href="@{/documents/upload}"
-               class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-medium text-sm shadow-lg shadow-blue-600/25 transition-all hover:scale-[1.02]">
+               class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-sm shadow-lg shadow-emerald-950/40 transition-all hover:scale-[1.02]">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                 Upload Document
             </a>
@@ -30,17 +30,17 @@
     </div>
 
     <!-- Search & Filter Card -->
-    <div class="glass-panel p-4 rounded-2xl border border-gray-800">
+    <div class="glass-panel p-4 rounded-2xl border border-[#1a382d]">
         <form th:action="@{/documents}" method="get" class="flex flex-col md:flex-row gap-3">
             <div class="flex-grow">
                 <input type="text" name="query" th:value="${query}"
                        placeholder="Search documents by title or description..."
-                       class="w-full px-4 py-2 rounded-xl bg-gray-950/80 border border-gray-700 text-sm text-gray-100 placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+                       class="w-full px-4 py-2 rounded-xl bg-[#07110d] border border-[#1a382d] text-sm text-gray-100 placeholder-gray-500 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none">
             </div>
 
             <div class="w-full md:w-56">
                 <select name="category" onchange="this.form.submit()"
-                        class="w-full px-3 py-2 rounded-xl bg-gray-950/80 border border-gray-700 text-sm text-gray-100 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+                        class="w-full px-3 py-2 rounded-xl bg-[#07110d] border border-[#1a382d] text-sm text-gray-100 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none">
                     <option value="" th:selected="${selectedCategory == null or selectedCategory == ''}">All Categories</option>
                     <option value="Financial" th:selected="${selectedCategory == 'Financial'}">Financial</option>
                     <option value="Legal" th:selected="${selectedCategory == 'Legal'}">Legal</option>
@@ -53,11 +53,11 @@
 
             <div class="flex gap-2">
                 <button type="submit"
-                        class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-colors">
+                        class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium transition-colors">
                     Search
                 </button>
                 <a th:href="@{/documents}"
-                   class="px-3 py-2 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 text-sm font-medium border border-gray-700 transition-colors">
+                   class="px-3 py-2 rounded-xl bg-[#07110d] hover:bg-[#12261f] text-gray-300 text-sm font-medium border border-[#1a382d] transition-colors">
                     Clear
                 </a>
             </div>
@@ -65,7 +65,7 @@
     </div>
 
     <!-- Documents Table -->
-    <div class="glass-panel rounded-2xl border border-gray-800 p-6">
+    <div class="glass-panel rounded-2xl border border-[#1a382d] p-6">
         <div th:if="${#lists.isEmpty(documents)}" class="text-center py-12 text-gray-400">
             <svg class="w-12 h-12 mx-auto text-gray-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
             <p class="text-sm font-medium">No documents match your query or filters.</p>
@@ -74,7 +74,7 @@
         <div th:unless="${#lists.isEmpty(documents)}" class="overflow-x-auto">
             <table class="w-full text-left text-xs">
                 <thead>
-                    <tr class="border-b border-gray-800 text-gray-400 uppercase tracking-wider">
+                    <tr class="border-b border-[#1a382d] text-gray-400 uppercase tracking-wider">
                         <th class="py-3 px-3">Title &amp; File</th>
                         <th class="py-3 px-3">Category</th>
                         <th class="py-3 px-3">Owner</th>
@@ -84,11 +84,11 @@
                         <th class="py-3 px-3 text-right">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-800/60 text-gray-300">
-                    <tr th:each="doc : ${documents}" class="hover:bg-gray-800/30 transition-colors">
+                <tbody class="divide-y divide-[#1a382d]/70 text-gray-300">
+                    <tr th:each="doc : ${documents}" class="hover:bg-[#0f2119]/40 transition-colors">
                         <td class="py-3.5 px-3">
                             <div>
-                                <a th:href="@{'/documents/' + ${doc.id}}" class="font-bold text-sm text-blue-400 hover:text-blue-300" th:text="${doc.title}">Title</a>
+                                <a th:href="@{'/documents/' + ${doc.id}}" class="font-bold text-sm text-emerald-400 hover:text-emerald-300" th:text="${doc.title}">Title</a>
                                 <div class="text-[11px] text-gray-400 font-mono mt-0.5" th:text="${doc.originalFileName}">file.pdf</div>
                             </div>
                         </td>
@@ -97,40 +97,19 @@
                                   th:classappend="${doc.category == 'Financial' ? 'bg-emerald-950/70 text-emerald-300 border border-emerald-800' :
                                                    doc.category == 'Legal' ? 'bg-amber-950/70 text-amber-300 border border-amber-800' :
                                                    doc.category == 'Confidential' ? 'bg-rose-950/70 text-rose-300 border border-rose-800' :
-                                                   doc.category == 'Technical' ? 'bg-cyan-950/70 text-cyan-300 border border-cyan-800' :
-                                                   'bg-gray-800 text-gray-300 border border-gray-700'}"
+                                                   doc.category == 'Technical' ? 'bg-teal-950/70 text-teal-300 border border-teal-800' :
+                                                   'bg-[#07110d] text-gray-300 border border-[#1a382d]'}"
                                   th:text="${doc.category}">Category</span>
                         </td>
-                        <td class="py-3.5 px-3 font-medium text-gray-200">
-                            <span th:text="${doc.owner.fullName}">Owner</span>
-                            <span th:if="${doc.owner.id == currentUser.id}" class="text-[10px] text-cyan-400 ml-1">(You)</span>
-                        </td>
+                        <td class="py-3.5 px-3 font-medium text-gray-300" th:text="${doc.owner.fullName}"></td>
                         <td class="py-3.5 px-3">
-                            <span class="hash-badge copy-hash" th:data-hash="${doc.fileHash}" th:text="${#strings.substring(doc.fileHash, 0, 12)} + '...'">hash</span>
+                            <span class="hash-badge copy-hash" th:data-hash="${doc.fileHash}" th:text="${#strings.substring(doc.fileHash, 0, 16)} + '...'">hash</span>
                         </td>
                         <td class="py-3.5 px-3 font-mono text-gray-400" th:text="${#numbers.formatDecimal(doc.fileSize / 1024.0, 1, 1)} + ' KB'"></td>
                         <td class="py-3.5 px-3 font-mono text-gray-400" th:text="${#temporals.format(doc.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
-                        <td class="py-3.5 px-3 text-right">
-                            <div class="inline-flex items-center gap-1.5">
-                                <a th:href="@{'/documents/' + ${doc.id}}" title="View Document"
-                                   class="p-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-700">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                                </a>
-                                <a th:href="@{'/documents/' + ${doc.id} + '/download'}" title="Download File"
-                                   class="p-1.5 rounded-lg bg-blue-600/80 hover:bg-blue-600 text-white">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                                </a>
-                                <a th:if="${permissionService.canManagePermissions(doc, currentUser)}"
-                                   th:href="@{'/documents/' + ${doc.id} + '/share'}" title="Manage Sharing"
-                                   class="p-1.5 rounded-lg bg-indigo-600/80 hover:bg-indigo-600 text-white">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
-                                </a>
-                                <a th:if="${permissionService.canEdit(doc, currentUser)}"
-                                   th:href="@{'/documents/' + ${doc.id} + '/edit'}" title="Edit Metadata"
-                                   class="p-1.5 rounded-lg bg-amber-600/80 hover:bg-amber-600 text-white">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                                </a>
-                            </div>
+                        <td class="py-3.5 px-3 text-right space-x-1.5 whitespace-nowrap">
+                            <a th:href="@{'/documents/' + ${doc.id}}" class="px-2.5 py-1 rounded-lg bg-[#07110d] hover:bg-[#12261f] text-gray-300 border border-[#1a382d] text-xs font-medium">Details</a>
+                            <a th:href="@{'/documents/' + ${doc.id} + '/download'}" class="px-2.5 py-1 rounded-lg bg-emerald-600/90 hover:bg-emerald-600 text-white text-xs font-medium">Download</a>
                         </td>
                     </tr>
                 </tbody>

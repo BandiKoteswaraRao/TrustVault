@@ -9,12 +9,12 @@
 <div th:fragment="content" class="space-y-6">
 
     <!-- Header & Verification Banner -->
-    <div class="glass-panel rounded-2xl border border-gray-800 p-6">
+    <div class="glass-panel rounded-2xl border border-[#1a382d] p-6">
         <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
             <div>
                 <div class="flex items-center gap-2">
                     <h1 class="text-2xl font-bold text-white flex items-center gap-2">
-                        <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                        <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                         Tamper-Evident Audit Trail
                     </h1>
                     <span th:if="${chainReport.valid}"
@@ -27,14 +27,14 @@
                     </span>
                 </div>
                 <p class="text-xs text-gray-400 mt-1">
-                    Every security action is sealed into a SHA-256 cryptographic chain. Any altered, deleted, or reordered record breaks subsequent hashes.
+                    Every security action is cryptographically sealed into a SHA-256 chain. Any modified, inserted, or deleted record invalidates all subsequent hashes.
                 </p>
                 <div class="mt-2 text-xs text-gray-400 flex items-center gap-2 flex-wrap">
                     <span class="text-gray-500">Genesis Hash:</span>
                     <span class="font-mono text-[11px] text-gray-400">00000000000000000000000000000000...</span>
-                    <span class="text-gray-600">&rarr;</span>
+                    <span class="text-emerald-500">&rarr;</span>
                     <span class="text-gray-500">Chain Length:</span>
-                    <span class="font-bold text-gray-200" th:text="${chainReport.totalRecords}">0</span>
+                    <span class="font-bold text-emerald-300" th:text="${chainReport.totalRecords}">0</span>
                 </div>
             </div>
 
@@ -42,7 +42,7 @@
             <div class="flex flex-wrap items-center gap-2">
                 <form th:action="@{/audit/verify}" method="post" class="inline m-0">
                     <button type="submit"
-                            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white font-bold text-xs shadow-lg shadow-cyan-600/25 transition-all hover:scale-105 active:scale-95">
+                            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs shadow-lg shadow-emerald-950/40 transition-all hover:scale-105 active:scale-95">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                         Verify Chain Integrity
                     </button>
@@ -69,142 +69,131 @@
         </div>
 
         <!-- Interactive Visual Chain Concept Banner -->
-        <div class="mt-5 pt-4 border-t border-gray-800/80">
-            <span class="text-[11px] font-bold uppercase tracking-wider text-gray-400 block mb-2">
+        <div class="mt-5 pt-4 border-t border-[#1a382d]">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-400 block mb-2">
                 ⛓️ Cryptographic Hash Chaining Mechanism
             </span>
             <div class="flex items-center gap-2 overflow-x-auto pb-2 text-[11px] font-mono">
-                <div class="shrink-0 p-2 rounded-lg bg-gray-950 border border-gray-800 text-gray-400">
-                    <span class="text-[10px] text-cyan-400 font-bold block">GENESIS ROOT</span>
+                <div class="shrink-0 p-2 rounded-lg bg-[#07110d] border border-[#1a382d] text-gray-400">
+                    <span class="text-[10px] text-emerald-400 font-bold block">GENESIS ROOT</span>
                     <span>0000000000000000...</span>
                 </div>
-                <span class="text-cyan-400 font-bold">&rarr;</span>
-                <div class="shrink-0 p-2 rounded-lg bg-gray-950 border border-gray-800 text-gray-300">
-                    <span class="text-[10px] text-indigo-400 font-bold block">BLOCK #0 (USER_CREATED)</span>
+                <span class="text-emerald-500 font-bold">&rarr;</span>
+                <div class="shrink-0 p-2 rounded-lg bg-[#07110d] border border-[#1a382d] text-gray-300">
+                    <span class="text-[10px] text-teal-400 font-bold block">BLOCK #0 (USER_CREATED)</span>
                     <span class="text-xs text-gray-400">H0 = SHA256(Data0 + Genesis)</span>
                 </div>
-                <span class="text-cyan-400 font-bold">&rarr;</span>
-                <div class="shrink-0 p-2 rounded-lg bg-gray-950 border border-gray-800 text-gray-300">
-                    <span class="text-[10px] text-blue-400 font-bold block">BLOCK #1 (DOC_UPLOADED)</span>
+                <span class="text-emerald-500 font-bold">&rarr;</span>
+                <div class="shrink-0 p-2 rounded-lg bg-[#07110d] border border-[#1a382d] text-gray-300">
+                    <span class="text-[10px] text-emerald-400 font-bold block">BLOCK #1 (DOC_UPLOADED)</span>
                     <span class="text-xs text-gray-400">H1 = SHA256(Data1 + H0)</span>
                 </div>
-                <span class="text-cyan-400 font-bold">&rarr;</span>
-                <div class="shrink-0 p-2 rounded-lg bg-gray-950 border border-gray-800 text-gray-300">
-                    <span class="text-[10px] text-emerald-400 font-bold block">BLOCK #2 (PERM_GRANTED)</span>
+                <span class="text-emerald-500 font-bold">&rarr;</span>
+                <div class="shrink-0 p-2 rounded-lg bg-[#07110d] border border-[#1a382d] text-gray-300">
+                    <span class="text-[10px] text-green-400 font-bold block">BLOCK #2 (PERM_GRANTED)</span>
                     <span class="text-xs text-gray-400">H2 = SHA256(Data2 + H1)</span>
                 </div>
-                <span class="text-cyan-400 font-bold">&rarr;</span>
-                <div class="shrink-0 p-2 rounded-lg bg-indigo-950/40 border border-indigo-700/60 text-indigo-200">
-                    <span class="text-[10px] text-cyan-300 font-bold block">LATEST BLOCK #N</span>
-                    <span class="text-xs text-cyan-400">Hn = SHA256(DataN + Hn-1)</span>
+                <span class="text-emerald-500 font-bold">&rarr;</span>
+                <div class="shrink-0 p-2 rounded-lg bg-emerald-950/40 border border-emerald-700/60 text-emerald-200">
+                    <span class="text-[10px] text-emerald-300 font-bold block">LATEST BLOCK #N</span>
+                    <span class="text-xs text-emerald-400">Hn = SHA256(DataN + Hn-1)</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Filter Bar -->
-    <div class="glass-panel p-4 rounded-2xl border border-gray-800">
+    <!-- Filter & Search Card -->
+    <div class="glass-panel p-4 rounded-2xl border border-[#1a382d]">
         <form th:action="@{/audit}" method="get" class="flex flex-col md:flex-row gap-3">
             <div class="flex-grow">
                 <input type="text" name="query" th:value="${query}"
-                       placeholder="Filter by actor username, target ID, or event details..."
-                       class="w-full px-4 py-2 rounded-xl bg-gray-950/80 border border-gray-700 text-sm text-gray-100 placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+                       placeholder="Filter by actor, details, or target..."
+                       class="w-full px-4 py-2 rounded-xl bg-[#07110d] border border-[#1a382d] text-sm text-gray-100 placeholder-gray-500 focus:border-emerald-500 outline-none">
             </div>
 
             <div class="w-full md:w-48">
                 <select name="action" onchange="this.form.submit()"
-                        class="w-full px-3 py-2 rounded-xl bg-gray-950/80 border border-gray-700 text-sm text-gray-100 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
-                    <option value="" th:selected="${selectedAction == null}">All Event Actions</option>
-                    <option th:each="act : ${actions}" th:value="${act}" th:text="${act}"
-                            th:selected="${selectedAction == act}">Action</option>
+                        class="w-full px-3 py-2 rounded-xl bg-[#07110d] border border-[#1a382d] text-sm text-gray-100 focus:border-emerald-500 outline-none">
+                    <option value="" th:selected="${selectedAction == null}">All Actions</option>
+                    <option th:each="act : ${actions}" th:value="${act}" th:selected="${selectedAction == act}" th:text="${act}">ACTION</option>
                 </select>
             </div>
 
-            <div class="w-full md:w-40">
+            <div class="w-full md:w-36">
                 <select name="status" onchange="this.form.submit()"
-                        class="w-full px-3 py-2 rounded-xl bg-gray-950/80 border border-gray-700 text-sm text-gray-100 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+                        class="w-full px-3 py-2 rounded-xl bg-[#07110d] border border-[#1a382d] text-sm text-gray-100 focus:border-emerald-500 outline-none">
                     <option value="" th:selected="${selectedStatus == null}">All Statuses</option>
-                    <option th:each="st : ${statuses}" th:value="${st}" th:text="${st}"
-                            th:selected="${selectedStatus == st}">Status</option>
+                    <option th:each="st : ${statuses}" th:value="${st}" th:selected="${selectedStatus == st}" th:text="${st}">STATUS</option>
                 </select>
             </div>
 
             <div class="flex gap-2">
-                <button type="submit"
-                        class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-colors">
+                <button type="submit" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium transition-colors">
                     Filter
                 </button>
-                <a th:href="@{/audit}"
-                   class="px-3 py-2 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 text-sm font-medium border border-gray-700 transition-colors">
-                    Reset
+                <a th:href="@{/audit}" class="px-3 py-2 rounded-xl bg-[#07110d] hover:bg-[#12261f] text-gray-300 text-sm font-medium border border-[#1a382d] transition-colors">
+                    Clear
                 </a>
             </div>
         </form>
     </div>
 
-    <!-- Audit Table -->
-    <div class="glass-panel rounded-2xl border border-gray-800 p-6">
-        <div th:if="${#lists.isEmpty(auditPage.content)}" class="text-center py-12 text-gray-400">
-            <p class="text-sm">No audit records match the selected filters.</p>
+    <!-- Audit Log Records Table -->
+    <div class="glass-panel rounded-2xl border border-[#1a382d] p-6">
+        <div th:if="${auditPage.empty}" class="text-center py-12 text-gray-400">
+            <svg class="w-12 h-12 mx-auto text-gray-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            <p class="text-sm font-medium">No audit log records match your filter.</p>
         </div>
 
-        <div th:unless="${#lists.isEmpty(auditPage.content)}" class="overflow-x-auto">
+        <div th:unless="${auditPage.empty}" class="overflow-x-auto">
             <table class="w-full text-left text-xs">
                 <thead>
-                    <tr class="border-b border-gray-800 text-gray-400 uppercase tracking-wider">
-                        <th class="py-3 px-3"># Block ID</th>
-                        <th class="py-3 px-3">Timestamp</th>
-                        <th class="py-3 px-3">Actor &amp; IP</th>
-                        <th class="py-3 px-3">Action</th>
-                        <th class="py-3 px-3">Status</th>
-                        <th class="py-3 px-3">Target &amp; Details</th>
-                        <th class="py-3 px-3">Cryptographic Chain Hashes</th>
+                    <tr class="border-b border-[#1a382d] text-gray-400 uppercase tracking-wider">
+                        <th class="py-2.5 px-3">Block #</th>
+                        <th class="py-2.5 px-3">Timestamp</th>
+                        <th class="py-2.5 px-3">Actor &amp; Role</th>
+                        <th class="py-2.5 px-3">Action</th>
+                        <th class="py-2.5 px-3">Target</th>
+                        <th class="py-2.5 px-3">Status</th>
+                        <th class="py-2.5 px-3">Details</th>
+                        <th class="py-2.5 px-3">Current Hash</th>
+                        <th class="py-2.5 px-3">Previous Hash</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-800/60 text-gray-300 font-sans">
-                    <tr th:each="log : ${auditPage.content}" class="hover:bg-gray-800/30 transition-colors">
-                        <td class="py-3 px-3 font-mono font-bold text-gray-400" th:text="'#' + ${log.id}">#1</td>
-                        <td class="py-3 px-3 font-mono text-gray-400 whitespace-nowrap"
-                            th:text="${#temporals.format(log.timestamp, 'yyyy-MM-dd HH:mm:ss')}"></td>
-                        <td class="py-3 px-3">
-                            <span class="font-bold text-gray-200" th:text="${log.actorUsername}">actor</span>
-                            <div class="text-[11px] text-gray-500 font-mono" th:text="${log.ipAddress}">127.0.0.1</div>
+                <tbody class="divide-y divide-[#1a382d]/70 text-gray-300">
+                    <tr th:each="log : ${auditPage.content}" class="hover:bg-[#0f2119]/40 transition-colors">
+                        <td class="py-2.5 px-3 font-mono font-bold text-emerald-400" th:text="'#' + ${log.id}">#1</td>
+                        <td class="py-2.5 px-3 whitespace-nowrap font-mono text-gray-400" th:text="${#temporals.format(log.timestamp, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                        <td class="py-2.5 px-3">
+                            <span class="font-semibold text-gray-200 block" th:text="${log.actorUsername}">actor</span>
+                            <span class="text-[10px] text-gray-500 font-mono" th:text="${log.actorRole}">ROLE</span>
                         </td>
-                        <td class="py-3 px-3">
+                        <td class="py-2.5 px-3">
                             <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider"
                                   th:classappend="${log.action.name() == 'ACCESS_DENIED' ? 'bg-rose-950/70 text-rose-300 border border-rose-800' :
-                                                   log.action.name() == 'DOCUMENT_UPLOAD' ? 'bg-blue-950/70 text-blue-300 border border-blue-800' :
-                                                   log.action.name() == 'DOCUMENT_DELETE' ? 'bg-red-950/70 text-red-300 border border-red-800' :
-                                                   log.action.name() == 'PERMISSION_GRANT' ? 'bg-purple-950/70 text-purple-300 border border-purple-800' :
+                                                   log.action.name() == 'DOCUMENT_UPLOAD' ? 'bg-emerald-950/70 text-emerald-300 border border-emerald-800' :
+                                                   log.action.name() == 'PERMISSION_GRANT' ? 'bg-teal-950/70 text-teal-300 border border-teal-800' :
                                                    log.action.name() == 'PERMISSION_REVOKE' ? 'bg-amber-950/70 text-amber-300 border border-amber-800' :
-                                                   log.action.name() == 'AUDIT_VERIFIED' ? 'bg-cyan-950/70 text-cyan-300 border border-cyan-800' :
-                                                   'bg-slate-800 text-slate-300 border border-slate-700'}"
-                                  th:text="${log.action}">Action</span>
+                                                   'bg-[#07110d] text-gray-300 border border-[#1a382d]'}"
+                                  th:text="${log.action}"></span>
                         </td>
-                        <td class="py-3 px-3">
+                        <td class="py-2.5 px-3 font-mono text-gray-400">
+                            <span th:text="${log.targetType != null ? log.targetType : '-'}"></span>
+                            <span th:if="${log.targetId != null}" th:text="':' + ${log.targetId}" class="text-gray-500"></span>
+                        </td>
+                        <td class="py-2.5 px-3">
                             <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider"
                                   th:classappend="${log.status.name() == 'SUCCESS' ? 'bg-emerald-950/60 text-emerald-400 border border-emerald-800' :
                                                    log.status.name() == 'DENIED' ? 'bg-rose-950/60 text-rose-400 border border-rose-800' :
                                                    'bg-amber-950/60 text-amber-400 border border-amber-800'}"
-                                  th:text="${log.status}">SUCCESS</span>
+                                  th:text="${log.status}"></span>
                         </td>
-                        <td class="py-3 px-3 max-w-sm">
-                            <div class="font-mono text-[11px] text-cyan-400 truncate" th:text="${log.targetType} + ':' + ${log.targetId}">target</div>
-                            <div class="text-gray-400 text-xs mt-0.5" th:text="${log.details}">Details</div>
+                        <td class="py-2.5 px-3 text-gray-300 max-w-xs truncate" th:title="${log.details}" th:text="${log.details}"></td>
+                        <td class="py-2.5 px-3 font-mono">
+                            <span class="hash-badge copy-hash" th:data-hash="${log.currentHash}" th:text="${#strings.substring(log.currentHash, 0, 10)} + '...'">hash</span>
                         </td>
-                        <td class="py-3 px-3 whitespace-nowrap">
-                            <div class="space-y-1">
-                                <div class="flex items-center gap-1.5">
-                                    <span class="text-[9px] text-gray-500 font-mono uppercase">Prev:</span>
-                                    <span class="hash-badge copy-hash" th:data-hash="${log.previousHash}"
-                                          th:text="${#strings.substring(log.previousHash, 0, 10)} + '...'">prev</span>
-                                </div>
-                                <div class="flex items-center gap-1.5">
-                                    <span class="text-[9px] text-gray-500 font-mono uppercase">Curr:</span>
-                                    <span class="hash-badge copy-hash text-cyan-300 border-cyan-900" th:data-hash="${log.currentHash}"
-                                          th:text="${#strings.substring(log.currentHash, 0, 10)} + '...'">curr</span>
-                                </div>
-                            </div>
+                        <td class="py-2.5 px-3 font-mono text-gray-500">
+                            <span class="hash-badge copy-hash" th:data-hash="${log.previousHash}" th:text="${#strings.substring(log.previousHash, 0, 10)} + '...'">hash</span>
                         </td>
                     </tr>
                 </tbody>
@@ -212,18 +201,21 @@
         </div>
 
         <!-- Pagination -->
-        <div th:if="${auditPage.totalPages > 1}" class="flex items-center justify-between border-t border-gray-800 pt-4 mt-4 text-xs">
+        <div th:if="${auditPage.totalPages > 1}" class="flex items-center justify-between mt-6 pt-4 border-t border-[#1a382d] text-xs">
             <span class="text-gray-400">
-                Page <span class="font-bold text-gray-200" th:text="${auditPage.number + 1}">1</span> of <span class="font-bold text-gray-200" th:text="${auditPage.totalPages}">1</span>
-                (<span th:text="${auditPage.totalElements}">0</span> total records)
+                Page <strong th:text="${auditPage.number + 1}">1</strong> of <strong th:text="${auditPage.totalPages}">1</strong>
             </span>
             <div class="flex gap-2">
                 <a th:if="${auditPage.hasPrevious()}"
-                   th:href="@{/audit(page=${auditPage.number - 1}, action=${selectedAction}, status=${selectedStatus}, query=${query})}"
-                   class="px-3 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-700 font-medium">Previous</a>
+                   th:href="@{/audit(page=${auditPage.number - 1}, size=${auditPage.size}, action=${selectedAction}, status=${selectedStatus}, query=${query})}"
+                   class="px-3 py-1.5 rounded-lg bg-[#07110d] hover:bg-[#12261f] text-gray-300 border border-[#1a382d]">
+                    Previous
+                </a>
                 <a th:if="${auditPage.hasNext()}"
-                   th:href="@{/audit(page=${auditPage.number + 1}, action=${selectedAction}, status=${selectedStatus}, query=${query})}"
-                   class="px-3 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-700 font-medium">Next</a>
+                   th:href="@{/audit(page=${auditPage.number + 1}, size=${auditPage.size}, action=${selectedAction}, status=${selectedStatus}, query=${query})}"
+                   class="px-3 py-1.5 rounded-lg bg-[#07110d] hover:bg-[#12261f] text-gray-300 border border-[#1a382d]">
+                    Next
+                </a>
             </div>
         </div>
     </div>

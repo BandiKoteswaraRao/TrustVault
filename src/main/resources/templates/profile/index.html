@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{layout/main :: layout(~{::title}, ~{::content})}">
+<head>
+    <title>User Profile — TrustVault</title>
+</head>
+<body>
+<div th:fragment="content" class="space-y-6 max-w-4xl mx-auto">
+
+    <!-- Header Row -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-bold text-white flex items-center gap-2">
+                <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                Account Profile
+            </h1>
+            <p class="text-xs text-gray-400 mt-1">Manage your identity, personal clearance, and credentials</p>
+        </div>
+        <a th:href="@{/profile/password}"
+           class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0f241c] hover:bg-[#16382a] text-emerald-300 border border-[#1a382d] text-xs font-semibold transition-all">
+            <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg>
+            Change Password
+        </a>
+    </div>
+
+    <!-- Profile Overview Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- User Badge Card -->
+        <div class="glass-panel p-6 rounded-2xl border border-[#1a382d] flex flex-col items-center text-center">
+            <div class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 p-0.5 shadow-xl shadow-emerald-500/20 mb-4">
+                <div class="w-full h-full bg-[#050807] rounded-[14px] flex items-center justify-center">
+                    <span class="text-3xl font-extrabold text-emerald-400" th:text="${#strings.substring(user.fullName, 0, 1)}">U</span>
+                </div>
+            </div>
+            <h3 class="text-lg font-bold text-white" th:text="${user.fullName}">User Full Name</h3>
+            <span class="text-xs text-emerald-400 font-mono mt-0.5" th:text="'@' + ${user.username}">@username</span>
+
+            <div class="mt-4 w-full pt-4 border-t border-[#1a382d] space-y-2 text-xs">
+                <div class="flex justify-between items-center text-gray-400">
+                    <span>Role Clearance:</span>
+                    <span class="font-bold uppercase tracking-wider text-[11px] px-2 py-0.5 rounded-full"
+                          th:classappend="${user.role.name() == 'ROLE_ADMIN' ? 'bg-rose-950/70 text-rose-300 border border-rose-800' :
+                                           user.role.name() == 'ROLE_OWNER' ? 'bg-emerald-950/70 text-emerald-300 border border-emerald-800' :
+                                           'bg-teal-950/70 text-teal-300 border border-teal-800'}"
+                          th:text="${user.role.name().replace('ROLE_', '')}">ROLE</span>
+                </div>
+                <div class="flex justify-between items-center text-gray-400">
+                    <span>Account Status:</span>
+                    <span class="text-emerald-400 font-semibold flex items-center gap-1">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Active
+                    </span>
+                </div>
+                <div class="flex justify-between items-center text-gray-400">
+                    <span>Registered:</span>
+                    <span class="font-mono text-gray-300" th:text="${#temporals.format(user.createdAt, 'yyyy-MM-dd')}">2026-10-24</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Details & Stats -->
+        <div class="md:col-span-2 space-y-6">
+            <!-- Stats Row -->
+            <div class="grid grid-cols-2 gap-4">
+                <div class="glass-panel p-4 rounded-xl border border-[#1a382d]">
+                    <span class="text-xs text-gray-400 uppercase font-semibold">Owned Documents</span>
+                    <h4 class="text-2xl font-bold text-emerald-400 mt-1" th:text="${ownedDocsCount}">0</h4>
+                    <p class="text-[11px] text-gray-500">Documents authored &amp; managed by you</p>
+                </div>
+                <div class="glass-panel p-4 rounded-xl border border-[#1a382d]">
+                    <span class="text-xs text-gray-400 uppercase font-semibold">Shared Documents</span>
+                    <h4 class="text-2xl font-bold text-teal-400 mt-1" th:text="${sharedDocsCount}">0</h4>
+                    <p class="text-[11px] text-gray-500">Shared with you via smart permissions</p>
+                </div>
+            </div>
+
+            <!-- Edit Profile Form -->
+            <div class="glass-panel p-6 rounded-2xl border border-[#1a382d]">
+                <h4 class="text-sm font-bold uppercase tracking-wider text-emerald-400 mb-4">Update Profile Details</h4>
+
+                <form th:action="@{/profile}" th:object="${profileDto}" method="post" class="space-y-4">
+                    <div>
+                        <label for="fullName" class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Full Name</label>
+                        <input type="text" id="fullName" th:field="*{fullName}" required
+                               class="w-full px-4 py-2.5 rounded-xl bg-[#07110d] border border-[#1a382d] focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm text-gray-100 outline-none transition-all">
+                        <span th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}" class="text-xs text-rose-400 mt-1 block"></span>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Email Address</label>
+                        <input type="email" th:value="${user.email}" disabled
+                               class="w-full px-4 py-2.5 rounded-xl bg-[#07110d]/50 border border-[#1a382d] text-sm text-gray-500 cursor-not-allowed font-mono">
+                        <span class="text-[11px] text-gray-500 mt-1 block">Primary login identifier (managed by system).</span>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Username</label>
+                        <input type="text" th:value="${user.username}" disabled
+                               class="w-full px-4 py-2.5 rounded-xl bg-[#07110d]/50 border border-[#1a382d] text-sm text-gray-500 cursor-not-allowed font-mono">
+                    </div>
+
+                    <div class="pt-2">
+                        <button type="submit"
+                                class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm shadow-lg shadow-emerald-950/40 transition-all hover:scale-[1.01]">
+                            Save Profile Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

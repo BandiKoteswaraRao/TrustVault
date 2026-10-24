@@ -1,4 +1,4 @@
-// TrustVault Security SaaS UI Script
+// TrustVault Security SaaS UI Script — Emerald & Black Theme
 
 document.addEventListener('DOMContentLoaded', function () {
     // 1. Copy Hash to Clipboard
@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (hashText) {
                 navigator.clipboard.writeText(hashText).then(function () {
                     const originalText = button.innerHTML;
-                    button.innerHTML = '<span class="text-emerald-400">Copied!</span>';
+                    button.innerHTML = '<span class="text-emerald-400 font-bold">Copied!</span>';
                     setTimeout(() => {
                         button.innerHTML = originalText;
                     }, 1800);
@@ -26,12 +26,12 @@ document.addEventListener('DOMContentLoaded', function () {
         if (usernameInput && passwordInput) {
             usernameInput.value = username;
             passwordInput.value = password;
-            // Visual pulse effect
-            usernameInput.classList.add('ring-2', 'ring-cyan-500');
-            passwordInput.classList.add('ring-2', 'ring-cyan-500');
+            // Visual emerald pulse effect
+            usernameInput.classList.add('ring-2', 'ring-emerald-500');
+            passwordInput.classList.add('ring-2', 'ring-emerald-500');
             setTimeout(() => {
-                usernameInput.classList.remove('ring-2', 'ring-cyan-500');
-                passwordInput.classList.remove('ring-2', 'ring-cyan-500');
+                usernameInput.classList.remove('ring-2', 'ring-emerald-500');
+                passwordInput.classList.remove('ring-2', 'ring-emerald-500');
             }, 600);
         }
     };
@@ -73,10 +73,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 const sizeKb = (file.size / 1024).toFixed(1);
                 if (fileNameDisplay) {
                     fileNameDisplay.innerHTML = `
-                        <div class="mt-2 inline-flex items-center gap-2 px-3 py-1.5 bg-blue-900/40 border border-blue-500/50 rounded-lg text-blue-200 text-sm font-medium">
-                            <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        <div class="mt-2 inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-950/70 border border-emerald-600/60 rounded-lg text-emerald-200 text-sm font-medium">
+                            <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                             <span>${file.name}</span>
-                            <span class="text-xs text-blue-300 font-mono">(${sizeKb} KB)</span>
+                            <span class="text-xs text-emerald-300 font-mono">(${sizeKb} KB)</span>
                         </div>
                     `;
                 }
