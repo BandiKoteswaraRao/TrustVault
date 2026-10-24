@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -82,7 +84,26 @@ export function createApp() {
   app.use('/api/documents', documentRoutes);
   app.use('/api/audit', auditRoutes);
 
-  // 7. Not Found & Central Error Handlers
+  // 7. Serve Built React Frontend in Production / Unified Mode
+  const frontendDistPath = path.resolve(process.cwd(), '../frontend/dist');
+  const localFrontendDistPath = path.resolve(process.cwd(), 'frontend/dist');
+  const activeFrontendDist = fs.existsSync(frontendDistPath)
+    ? frontendDistPath
+    : fs.existsSync(localFrontendDistPath)
+    ? localFrontendDistPath
+    : null;
+
+  if (activeFrontendDist) {
+    app.use(express.static(activeFrontendDist));
+    app.use((req, res, next) => {
+      if (req.method === 'GET' && !req.path.startsWith('/api') && req.path !== '/health') {
+        return res.sendFile(path.join(activeFrontendDist, 'index.html'));
+      }
+      next();
+    });
+  }
+
+  // 8. Not Found & Central Error Handlers
   app.use(notFoundHandler);
   app.use(errorHandler);
 
