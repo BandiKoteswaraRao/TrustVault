@@ -16,7 +16,7 @@ export async function handleGrantPermission(
       return;
     }
 
-    const { id: documentId } = req.params;
+    const documentId = req.params.id as string;
     const { granteeEmail, permissionLevel } = req.body;
     const ipAddress = req.ip || req.socket.remoteAddress || undefined;
     const userAgent = req.headers['user-agent'] || undefined;
@@ -51,7 +51,8 @@ export async function handleRevokePermission(
       return;
     }
 
-    const { id: documentId, permissionId } = req.params;
+    const documentId = req.params.id as string;
+    const permissionId = req.params.permissionId as string;
     const ipAddress = req.ip || req.socket.remoteAddress || undefined;
     const userAgent = req.headers['user-agent'] || undefined;
 
@@ -83,7 +84,7 @@ export async function handleListPermissions(
       return;
     }
 
-    const { id: documentId } = req.params;
+    const documentId = req.params.id as string;
     const permissions = await getDocumentPermissions(documentId, req.user.id);
 
     res.status(200).json({ permissions });

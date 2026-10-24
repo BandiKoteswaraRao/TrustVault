@@ -113,7 +113,7 @@ export async function handleGetDocumentDetails(
       return;
     }
 
-    const { id } = req.params;
+    const id = req.params.id as string;
     const result = await getDocumentWithAuthorization(id, req.user.id);
 
     res.status(200).json(result);
@@ -133,7 +133,7 @@ export async function handleDownloadDocument(
       return;
     }
 
-    const { id } = req.params;
+    const id = req.params.id as string;
     const ipAddress = req.ip || req.socket.remoteAddress || undefined;
     const userAgent = req.headers['user-agent'] || undefined;
 
@@ -181,7 +181,7 @@ export async function handleUpdateDocument(
       return;
     }
 
-    const { id } = req.params;
+    const id = req.params.id as string;
     const { title, description } = req.body;
 
     const doc = await updateDocument(id, req.user.id, { title, description });
@@ -202,7 +202,7 @@ export async function handleDeleteDocument(
       return;
     }
 
-    const { id } = req.params;
+    const id = req.params.id as string;
     const ipAddress = req.ip || req.socket.remoteAddress || undefined;
     const userAgent = req.headers['user-agent'] || undefined;
 
