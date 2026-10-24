@@ -60,7 +60,10 @@ export function canonicalStringify(obj: any): string {
   if (Array.isArray(obj)) {
     return '[' + obj.map(canonicalStringify).join(',') + ']';
   }
-  const keys = Object.keys(obj).sort();
+  // Filter out undefined values to strictly match JSON.stringify / JSONB serialization
+  const keys = Object.keys(obj)
+    .filter((key) => obj[key] !== undefined)
+    .sort();
   const pairs = keys.map((key) => `${JSON.stringify(key)}:${canonicalStringify(obj[key])}`);
   return '{' + pairs.join(',') + '}';
 }
@@ -119,7 +122,7 @@ export async function recordAuditEvent(
 
     const eventId = crypto.randomUUID();
     const timestamp = new Date().toISOString();
-    const metadata = input.metadata || {};
+    const metadata = JSON.parse(JSON.stringify(input.metadata || {}));
 
     // 2. Compute canonical hash
     const currentHash = computeEventHash({
