@@ -104,3 +104,9 @@ This log records the genuine, chronological development prompts, technical decis
    - Resolved Java 25 Mockito inline mock maker constraint using `mock-maker-subclass`.
    - Full test suite passed with `BUILD SUCCESS` (27/27 tests passed).
 
+6. **Render Cloud Blueprint Deployment:**
+   - Deployed live cloud Web Service via Render Blueprint `render.yaml`.
+   - Connected GitHub repository `BandiKoteswaraRao/TrustVault` (Blueprint ID: `exs-dbebb3i9lscs73aj8s20`).
+   - Integrated live `/health` endpoint for continuous 24/7 uptime monitoring and zero-downtime healthcheck pings.
+
+

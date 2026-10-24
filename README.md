@@ -4,11 +4,16 @@
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.5-brightgreen.svg)](https://spring.io/projects/spring-boot)
 [![Spring Security](https://img.shields.io/badge/Spring%20Security-6.3-green.svg)](https://spring.io/projects/spring-security)
 [![Database](https://img.shields.io/badge/Database-PostgreSQL%20%7C%20Supabase%20%7C%20MySQL%20%7C%20H2-blue.svg)](https://supabase.com/)
-[![Deployment](https://img.shields.io/badge/Deploy-Render-black.svg?logo=render)](https://render.com/)
+[![Render Status](https://img.shields.io/badge/Render-Live%20Online-10b981.svg?logo=render)](https://trustvault.onrender.com)
 [![Tests](https://img.shields.io/badge/JUnit%205-27%20Passed-success.svg)](#running-automated-tests)
 [![UI Theme](https://img.shields.io/badge/UI%20Theme-Black%20%26%20Emerald%20Green-10b981.svg)](#accessible--responsive-enterprise-ui)
 
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/BandiKoteswaraRao/TrustVault)
+
+> 🌐 **Live Cloud Deployment on Render:**  
+> **Application URL:** [https://trustvault.onrender.com](https://trustvault.onrender.com) *(or your assigned Render service URL)*  
+> **Health Monitor:** [https://trustvault.onrender.com/health](https://trustvault.onrender.com/health)  
+> **Blueprint:** `render.yaml` (Service: `trustvault`)
 
 **TrustVault** is an enterprise-grade full-stack web application designed for high-security document sharing, granular access control, user management, and compliance auditing. Built on Spring Boot, Spring Security, and Thymeleaf with an ultra-sleek **Black & Emerald-Green** theme, TrustVault guarantees strict server-side authorization on every operation, eliminates Insecure Direct Object References (IDOR), connects seamlessly with **Supabase PostgreSQL & Private Storage** (with zero-config local fallback), and seals every security event inside a **tamper-evident SHA-256 cryptographic hash chain** with real-time verification.
 
