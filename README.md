@@ -253,11 +253,11 @@ For the full 9-step evaluator demo walkthrough, refer to [docs/DEMO_SCRIPT.md](d
 
 ## 8. Live Deployment & Public Links
 
-- **Live Public HTTPS Web App:** https://silent-peas-matter.loca.lt
+- **Live Public HTTPS Web App:** https://trustvault-demo.loca.lt
   *(For localtunnel verification prompt, enter tunnel password IP: `103.174.160.17`)*
 - **Direct Local Network (LAN) URL:** `http://192.168.1.72:4000` (Access from any smartphone or tablet connected to the local Wi-Fi)
 - **Local Fullstack Application:** `http://localhost:4000`
-- **Live Health Check Endpoint:** https://silent-peas-matter.loca.lt/health (returns `{"status":"healthy","service":"TrustVault Core API",...}`)
+- **Live Health Check Endpoint:** https://trustvault-demo.loca.lt/health (returns `{"status":"healthy","service":"TrustVault Core API",...}`)
 - **Public GitHub Repository:** https://github.com/BandiKoteswaraRao/TrustVault
 
 ### Cloud Deployment (Render Blueprint)
