@@ -1,1 +1,2 @@
-# Keep storage directory structure
+# TrustVault private uploaded documents storage directory
+# Uploaded files are securely stored here with randomized UUID names outside public access.

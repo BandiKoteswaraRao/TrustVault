@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{layout/main :: layout(~{::title}, ~{::content})}">
+<head>
+    <title>Edit Document — TrustVault</title>
+</head>
+<body>
+<div th:fragment="content" class="max-w-2xl mx-auto space-y-6">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-bold text-white flex items-center gap-2">
+                <svg class="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                Edit Document Metadata
+            </h1>
+            <p class="text-xs text-gray-400 mt-1">
+                Editing is recorded in the tamper-evident audit trail with actor signature.
+            </p>
+        </div>
+        <a th:href="@{'/documents/' + ${document.id}}" class="text-xs font-semibold text-gray-400 hover:text-white">Cancel</a>
+    </div>
+
+    <!-- Edit Form Card -->
+    <div class="glass-panel rounded-2xl border border-gray-800 p-6 sm:p-8">
+        <form th:action="@{'/documents/' + ${document.id} + '/edit'}" th:object="${editDto}" method="post" enctype="multipart/form-data" class="space-y-5">
+            <input type="hidden" th:field="*{id}">
+
+            <div>
+                <label for="title" class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Document Title</label>
+                <input type="text" id="title" th:field="*{title}" required
+                       class="w-full px-4 py-2.5 rounded-xl bg-gray-950/80 border border-gray-700 text-sm text-gray-100 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+                <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="text-xs text-rose-400 mt-1 block"></span>
+            </div>
+
+            <div>
+                <label for="category" class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Security Category</label>
+                <select id="category" th:field="*{category}"
+                        class="w-full px-4 py-2.5 rounded-xl bg-gray-950/80 border border-gray-700 text-sm text-gray-100 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+                    <option value="Financial">Financial</option>
+                    <option value="Legal">Legal</option>
+                    <option value="Confidential">Confidential</option>
+                    <option value="Technical">Technical</option>
+                    <option value="Personal">Personal</option>
+                    <option value="General">General</option>
+                </select>
+                <span th:if="${#fields.hasErrors('category')}" th:errors="*{category}" class="text-xs text-rose-400 mt-1 block"></span>
+            </div>
+
+            <div>
+                <label for="description" class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Description</label>
+                <textarea id="description" th:field="*{description}" rows="3"
+                          class="w-full px-4 py-2.5 rounded-xl bg-gray-950/80 border border-gray-700 text-sm text-gray-100 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"></textarea>
+                <span th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="text-xs text-rose-400 mt-1 block"></span>
+            </div>
+
+            <div class="border-t border-gray-800 pt-4">
+                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Replace Document File (Optional)</label>
+                <div class="p-3 bg-gray-950/60 rounded-xl border border-gray-800 mb-2 text-xs text-gray-400">
+                    Current file: <span class="font-mono text-gray-200" th:text="${document.originalFileName}">file.pdf</span>
+                    (<span th:text="${#numbers.formatDecimal(document.fileSize / 1024.0, 1, 1)} + ' KB'"></span>)
+                </div>
+                <input type="file" id="replacementFile" name="replacementFile"
+                       accept=".pdf,.docx,.doc,.xlsx,.xls,.pptx,.txt,.csv,.png,.jpg,.jpeg,.zip"
+                       class="w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-600/30 file:text-blue-300 hover:file:bg-blue-600/50 cursor-pointer">
+                <p class="text-[10px] text-gray-500 mt-1">Leave empty to keep existing document file.</p>
+            </div>
+
+            <button type="submit"
+                    class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-white font-semibold text-sm shadow-lg shadow-amber-600/30 transition-all hover:scale-[1.01] active:scale-[0.99]">
+                Save Changes &amp; Log Audit Entry
+            </button>
+        </form>
+    </div>
+
+</div>
+</body>
+</html>

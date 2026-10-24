@@ -1,52 +1,44 @@
-# Dependencies
-node_modules/
-.pnp
-.pnp.js
+# Compiled class file
+target/
+*.class
 
-# Environment variables
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# Log file
+*.log
 
-# Build outputs
-dist/
-build/
-out/
-.next/
+# Package Files #
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
 
-# Testing and coverage
-coverage/
-*.lcov
-.nyc_output
+# Virtual machine crash logs
+hs_err_pid*
+replay_pid*
 
-# Storage - uploaded documents must never be committed
+# Tools and Local Binaries
+.tools/
+
+# Document Storage & Uploads
+storage/
 storage/uploads/*
 !storage/uploads/.gitkeep
-backend/storage/
-backend/storage/uploads/*
 
-# Database data directory (local embedded Postgres)
-.pgdata/
-*.sqlite
-*.db
+# Environment and Secrets
+.env
+.env.local
+*.properties.local
 
-# Logs
-logs/
-*.log
-npm-debug.log*
-yarn-debug.log*
-pnpm-debug.log*
+# IDE & Editor settings
+.idea/
+*.iml
+.vscode/
+.project
+.classpath
+.settings/
 
-# OS and Editor files
+# OS generated files
 .DS_Store
 Thumbs.db
-.idea/
-.vscode/
-*.swp
-*.swo
-
-# Temporary files
-tmp/
-temp/

@@ -1,0 +1,16 @@
+package com.trustvault.model;
+
+public enum AuditAction {
+    USER_REGISTER,
+    USER_LOGIN,
+    USER_LOGOUT,
+    DOCUMENT_UPLOAD,
+    DOCUMENT_VIEW,
+    DOCUMENT_DOWNLOAD,
+    DOCUMENT_EDIT,
+    DOCUMENT_DELETE,
+    PERMISSION_GRANT,
+    PERMISSION_REVOKE,
+    ACCESS_DENIED,
+    AUDIT_VERIFIED
+}

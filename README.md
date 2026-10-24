@@ -1,277 +1,233 @@
-# TrustVault — Secure Document Sharing with a Real Audit Trail
+# TrustVault — Secure Document Sharing with a Tamper-Evident Audit Trail
 
-[![Security: OWASP Top 10](https://img.shields.io/badge/Security-OWASP%20Top%2010%20Verified-emerald.svg)](THREATS.md)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue.svg)](https://www.typescriptlang.org/)
-[![Database: PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL%2016-336791.svg)](https://www.postgresql.org/)
-[![Audit: SHA--256 Chained](https://img.shields.io/badge/Audit-SHA--256%20Cryptographic%20Chain-purple.svg)](docs/DEMO_SCRIPT.md)
-[![Tests: 34 Passing](https://img.shields.io/badge/Tests-34%20Passing%20(100%25)-brightgreen.svg)](tests/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Java](https://img.shields.io/badge/Java-21%20%7C%2025%20LTS-orange.svg)](https://www.oracle.com/java/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.5-brightgreen.svg)](https://spring.io/projects/spring-boot)
+[![Spring Security](https://img.shields.io/badge/Spring%20Security-6.3-green.svg)](https://spring.io/projects/spring-security)
+[![Database](https://img.shields.io/badge/Database-MySQL%20%7C%20H2-blue.svg)](https://www.mysql.com/)
+[![Tests](https://img.shields.io/badge/JUnit%205-18%20Passed-success.svg)](#running-automated-tests)
 
-TrustVault is an enterprise-grade digital document storage and controlled sharing platform engineered from scratch with **server-enforced zero-trust authorization**, **isolated UUID storage**, **immediate permission revocation**, and an **append-only, SHA-256 hash-linked cryptographic audit trail** with automated mathematical tamper verification.
-
----
-
-## 1. Project Overview & Problem Statement
-
-Digital documents are frequently shared between individuals and organizations, introducing grave risks of:
-- **Broken Object-Level Authorization (IDOR / BOLA):** Attackers manipulating document UUIDs or IDs in API requests to access confidential records.
-- **Broken Function-Level Authorization (BFLA):** Document recipients delegating access to unauthorized third parties or revoking legitimate owners.
-- **Dangling Access Post-Revocation:** Systems that rely on cached tokens or pre-signed URLs allowing continued access after permissions are revoked.
-- **Accountability Vacuum & Audit Tampering:** File sharing systems that lack audit records, or store mutable log rows that can be silently altered, truncated, or re-ordered by malicious insiders.
-
-**TrustVault solves this comprehensively:**
-1. **Zero-Trust Access Control:** Frontend UI button states are cosmetic; every single download and document operation dynamically queries PostgreSQL for active, non-revoked authorization in real time.
-2. **Immediate Access Revocation:** The instant an owner revokes access, all subsequent download attempts by the grantee fail immediately with HTTP 403 Forbidden.
-3. **Cryptographic SHA-256 Audit Trail:** Every sensitive operation (login, upload, download, share, revoke, verification) is sealed in an append-only hash chain linking each record to its predecessor.
-4. **Automated Mathematical Tamper Detection:** A built-in verification engine recalculates the canonical hash chain from genesis to head, identifying exact event corruption indices, broken links, and altered payloads.
+**TrustVault** is an enterprise-grade full-stack web application designed for high-security document sharing, granular access control, and compliance auditing. Built on Spring Boot, Spring Security, and Thymeleaf, TrustVault guarantees strict server-side authorization on every operation, eliminates Insecure Direct Object References (IDOR), and seals every security event inside a **tamper-evident SHA-256 cryptographic hash chain** with real-time integrity verification.
 
 ---
 
-## 2. System Architecture & Request Data Flow
+## 🛡️ Core Features
 
-```
-+---------------------------------------------------------------------------------+
-|                                 UNTRUSTED ZONE                                  |
-|                                                                                 |
-|   +-----------------------+              +----------------------------------+   |
-|   | Browser / Web Client  |              | Attacker / Automated API Scripts |   |
-|   +-----------+-----------+              +-----------------+----------------+   |
-+---------------|--------------------------------------------|--------------------+
-                | HTTPS (TLS 1.3)                            |
-================|============================================|=====================
-                | TRUST BOUNDARY 1: Perimeter Security       |
-                v                                            v
-+---------------------------------------------------------------------------------+
-|                                 DMZ / API LAYER                                 |
-|                                                                                 |
-|   [ Express.js REST API ]                                                       |
-|     ├─ Helmet HTTP Security Headers (CSP, HSTS, X-Frame-Options, noSniff)       |
-|     ├─ Strict CORS Policy (Configured Origin Only)                              |
-|     ├─ Rate Limiting (Global 100 req/15m; Auth 10 attempts/15m)                 |
-|     ├─ Request Body & Query Validation (Zod Schemas)                            |
-|     └─ JWT Authentication Middleware (Bearer Header Validation)                 |
-+---------------------------------------------------------------------------------+
-                | Validated, Authenticated Request Context
-================|==================================================================
-                | TRUST BOUNDARY 2: Core Domain & Authorization
-                v
-+---------------------------------------------------------------------------------+
-|                         APPLICATION CORE & AUTHORIZATION                        |
-|                                                                                 |
-|     ├─ Document Service (Ownership enforcement, UUID storage resolution)         |
-|     ├─ Permission Service (Owner-only delegation, immediate revocation checks)  |
-|     ├─ File Storage Engine (Isolated storage, magic-byte MIME validation)       |
-|     └─ Audit Service (Canonical SHA-256 hash-chaining in DB transactions)        |
-+---------------------------------------------------------------------------------+
-                | Parameterized SQL Queries & File I/O
-================|==================================================================
-                | TRUST BOUNDARY 3: Persistent Storage
-                v
-+------------------------------------+    +---------------------------------------+
-| PostgreSQL Relational Database     |    | Private Local / Cloud Object Storage  |
-|  - Users (Bcrypt hashes, salt 12)  |    |  - Non-executable isolated directory  |
-|  - Documents (Metadata & status)   |    |  - UUID filename mapping              |
-|  - Permissions (Active & revoked)  |    |  - No public HTTP exposure            |
-|  - Audit Events (Hash-linked chain)|    |                                       |
-+------------------------------------+    +---------------------------------------+
-```
+1. **Authentication & Multi-Role RBAC:**
+   - Pre-configured `ROLE_ADMIN`, `ROLE_OWNER`, and `ROLE_VIEWER` roles.
+   - Passwords securely hashed with BCrypt (strength 12).
+   - Session fixation defense and CSRF protection on all forms.
+   - 1-Click Demo Login credentials directly on the sign-in page.
+
+2. **Secure Document Management:**
+   - Private file storage outside the web root directory (`storage/uploads/`).
+   - Disk filenames randomized using cryptographically strong UUIDs (`<uuid>.<ext>`) to prevent direct static access.
+   - Strict filename sanitization (`FilenameUtils.getName()`) preventing directory traversal (`..`, `%00`).
+   - Extension whitelist validation (`.pdf`, `.docx`, `.xlsx`, `.png`, etc.) rejecting dangerous executables (`.exe`, `.jsp`, `.sh`, `.bat`).
+   - Instant calculation and storage of raw file content SHA-256 digests.
+
+3. **Smart Sharing & Immediate Revocation:**
+   - Document owners can grant granular `READ` (view & download) or `EDIT` (view, download, modify) access to specific collaborators.
+   - **Immediate Revocation:** Permissions are verified directly against the database on every protected request. Revoking access blocks the recipient on their very next HTTP request without waiting for token expiry.
+
+4. **Tamper-Evident Audit Trail (Cryptographic Hash Chain):**
+   - Every security event (upload, download, edit, delete, grant, revoke, and denied access) is sealed into a cryptographic block.
+   - Each block contains: `timestamp`, `actor`, `action`, `target`, `details`, `status`, `ip_address`, `previous_hash`, and `current_hash`.
+   - Starts from an established 64-character Genesis Hash (`0000...0000`).
+   - **One-Click Integrity Verification:** Recalculates every hash from Genesis to the latest block. Instantly flags modified records, broken links from deletions, or reordered blocks with exact record ID and index.
+
+5. **Executive Security Dashboard:**
+   - Real-time metrics: Total Documents, Active Users, Total Audit Blocks, and Security Violations (IDOR interceptions).
+   - Live Audit Chain Status indicator with hash display.
+   - Recent activity feed and document browser.
+
+6. **Accessible & Responsive Enterprise UI:**
+   - Clean, modern Dark-Mode Security SaaS theme built with Tailwind CSS.
+   - Search query and category filters (`Financial`, `Legal`, `Confidential`, `Technical`, `Personal`, `General`).
+   - Custom accessible 403 Forbidden, 404 Not Found, and 500 Error pages explaining security interception context.
 
 ---
 
-## 3. Technology Stack
+## 🧱 Technology Stack
 
-- **Frontend:** React 18, TypeScript, Vite, Tailwind CSS, Lucide Icons
-- **Backend:** Node.js LTS, Express, TypeScript, Multer
-- **Database:** PostgreSQL 16 (with reproducible SQL migrations, connection pooling, and embedded PGlite WASM test engine)
-- **Password Hashing:** Bcrypt with 12 salt rounds
-- **Authentication:** Short-lived JWTs, Bearer token authorization
-- **Input Validation:** Zod schemas with input normalization
-- **Security:** Helmet, strict CORS, Express Rate Limit, Parameterized SQL queries, magic-byte signature validation
-- **Audit Engine:** Canonical JSON serialization, SHA-256 hash chaining, HMAC external checkpoint anchor
-- **Testing:** Vitest, Supertest (34 passing automated security & integration tests)
-
----
-
-## 4. Cryptographic Audit Trail & Verification Design
-
-### Mathematical Hash Chaining
-Each audit event contains a canonical hash computed over its serialized payload and linked to the preceding event's digest:
-
-$$Hash_0 = \text{SHA-256}(\text{CanonicalPayload}_0 \parallel \text{GENESIS\_HASH})$$
-$$Hash_i = \text{SHA-256}(\text{CanonicalPayload}_i \parallel Hash_{i-1})$$
-
-Where $\text{GENESIS\_HASH} = \text{0000000000000000000000000000000000000000000000000000000000000000}$.
-
-### Canonical JSON Serialization
-To prevent false-positive corruption alerts caused by differing dictionary key orders, `canonicalStringify()` sorts all keys lexicographically at every recursive depth:
-```typescript
-{
-  action: "DOCUMENT_UPLOAD",
-  actorEmail: "alice.owner@trustvault.local",
-  actorId: "uuid-alice",
-  id: "uuid-event",
-  ipAddress: "127.0.0.1",
-  metadata: { checksum: "...", fileName: "..." },
-  outcome: "SUCCESS",
-  prevHash: "previous-event-hash-64-chars",
-  targetId: "uuid-doc",
-  targetType: "DOCUMENT",
-  timestamp: "2026-10-24T11:00:00.000Z",
-  userAgent: "Mozilla/5.0..."
-}
-```
-
-### Tamper Detection Capabilities
-The `verifyAuditChain()` engine checks:
-1. **Link Continuity:** Confirms `event[i].prev_hash === event[i-1].current_hash`. Flags deleted, inserted, or reordered records.
-2. **Payload Authenticity:** Recomputes `expected_hash` from the canonical event data and verifies `event.current_hash === expected_hash`. Flags modified actions, outcomes, or metadata.
-3. **External HMAC Checkpoint Anchor:** Cryptographically seals the chain head with an HMAC-SHA256 signature using `AUDIT_HMAC_SECRET`.
+| Layer | Technology |
+| :--- | :--- |
+| **Backend Framework** | Java 21 / 25, Spring Boot 3.3.5 |
+| **Security & RBAC** | Spring Security 6, BCrypt, CSRF Protection |
+| **Persistence / ORM** | Spring Data JPA, Hibernate ORM 6.5 |
+| **Databases** | MySQL 8.x / 26.x (Production) &amp; Embedded H2 (Zero-Config Fallback) |
+| **Frontend Templates** | Thymeleaf 3, Thymeleaf Spring Security 6 extras |
+| **Styling & Interaction** | Tailwind CSS CDN, Modern Dark-Theme SaaS CSS, Vanilla JavaScript |
+| **Build & Testing** | Apache Maven 3.10.0, JUnit 5, AssertJ, Spring Security Test |
+| **Containerization** | Docker, Docker Compose |
 
 ---
 
-## 5. Automated Test Suite & Actual Results
-
-TrustVault includes 34 automated security, authorization, and integrity tests:
-
-```text
- ✓ tests/security/auth.test.ts (10 tests)
-   ✓ successfully registers a user with normalized email and secure password
-   ✓ rejects duplicate registration with 409 Conflict
-   ✓ rejects weak passwords failing security complexity criteria
-   ✓ successfully authenticates with valid credentials and issues JWT
-   ✓ rejects invalid password with generic error (prevents username enumeration)
-   ✓ rejects non-existent email with identical generic error
-   ✓ denies access to protected endpoint /api/auth/me without authorization header
-   ✓ denies access to protected endpoint /api/auth/me with forged or invalid token
-   ✓ allows access to protected endpoint /api/auth/me with valid Bearer token
-   ✓ records audit events for registration, login success, and login failure
-
- ✓ tests/security/authorization.test.ts (13 tests)
-   ✓ 1. Rejects unauthenticated request to list documents with 401 Unauthorized
-   ✓ 2. Rejects User B's attempt to download User A's private document before permission is granted
-   ✓ 3. Rejects User B's attempt to view the permission list of User A's document
-   ✓ Owner (Alice) grants access to Bob successfully
-   ✓ Bob can successfully download the document while permission is active
-   ✓ 4. Rejects recipient's (Bob) attempt to grant access to a third party (Charlie) (BFLA)
-   ✓ 5. Rejects recipient's attempt to revoke permissions on the document
-   ✓ 6. Prevents privilege escalation and forged ownership updates via request body
-   ✓ Alice (owner) revokes Bob's access
-   ✓ 7. Immediately rejects Bob's download request after permission revocation (Immediate Revocation)
-   ✓ 8. Rejects access when targeting invalid or manipulated document IDs (BOLA/IDOR)
-   ✓ 9. Rejects file upload with dangerous executable extension (.sh, .exe, .bat)
-   ✓ 10. Prevents unauthenticated and unauthorized access to audit verification and logs
-
- ✓ tests/security/auditIntegrity.test.ts (7 tests)
-   ✓ 1. Computes valid hash chain with genesis link and external HMAC anchor
-   ✓ 2. Detects payload data tampering (e.g. modified action or outcome)
-   ✓ 3. Detects modified current_hash (tampered hash)
-   ✓ 4. Detects broken link / deleted historical event
-   ✓ 5. Maintains integrity during concurrent audit event writes
-   ✓ 6. API endpoint GET /api/audit/verify returns verification report
-   ✓ 7. API endpoint GET /api/audit filters logs by action and targetType
-
- ✓ tests/security/inputValidation.test.ts (4 tests)
-   ✓ 1. Safely parameterizes SQL injection payloads in search query parameter
-   ✓ 2. Safely parameterizes SQL injection payloads in login authentication
-   ✓ 3. Neutralizes and safely stores XSS payloads in document title and metadata
-   ✓ 4. Rejects path traversal file names (../../etc/passwd)
-
-Test Files  4 passed (4)
-     Tests  34 passed (34)
-  Duration  4.38s
-```
-
----
-
-## 6. Local Setup from Scratch
+## 🚀 Quick Start (Zero-Configuration)
 
 ### Prerequisites
-- Node.js (v18.0.0 or higher)
-- npm (v9.0.0 or higher)
-- PostgreSQL (or automated embedded WASM database)
-- Git
+- Java JDK 21 or 25 installed.
 
-### 1. Clone the repository
-```bash
-git clone https://github.com/BandiKoteswaraRao/TrustVault.git
-cd TrustVault
+### Run the Pre-Built Standalone JAR
+TrustVault comes ready-to-run with zero configuration. By default, it runs against an embedded in-memory database in MySQL mode:
+
+```powershell
+# In PowerShell:
+& "C:\Program Files\Java\jdk-25\bin\java.exe" -jar target\trustvault-1.0.0.jar
 ```
 
-### 2. Configure Environment Variables
-```bash
-cp .env.example .env
-# Edit .env with your configuration if needed
-```
-
-### 3. Install Dependencies
-```bash
-# Backend
-cd backend
-npm.cmd install
-
-# Frontend
-cd ../frontend
-npm.cmd install
-```
-
-### 4. Run Migrations & Seed Demo Accounts
-```bash
-cd ../backend
-npm.cmd run migrate
-npm.cmd run seed
-```
-
-### 5. Run Security Test Suite
-```bash
-npm.cmd test
-```
-
-### 6. Start Development Servers
-```bash
-# Terminal 1: Backend (Port 4000)
-cd backend
-npm.cmd run dev
-
-# Terminal 2: Frontend (Port 5173)
-cd frontend
-npm.cmd run dev
-```
-
-Open `http://localhost:5173` in your browser.
+Open your browser and navigate to:
+👉 **[http://localhost:8080](http://localhost:8080)**
 
 ---
 
-## 7. Interactive Evaluation Demo
+## 🔑 Pre-Seeded Demo Accounts (1-Click Login)
 
-The application comes with pre-seeded demo accounts:
-- **Owner (Alice):** `demo.owner@trustvault.local` (Password: `DemoOwner123!`)
-- **Recipient (Bob):** `demo.recipient@trustvault.local` (Password: `DemoRecipient123!`)
+The login screen features **1-Click Quick-Fill buttons** so you can test all roles immediately:
 
-For the full 9-step evaluator demo walkthrough, refer to [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md).
-
----
-
-## 8. Live Deployment & Public Links
-
-- **Live Public HTTPS Web App:** https://trustvault-demo.loca.lt
-  *(For localtunnel verification prompt, enter tunnel password IP: `103.174.160.17`)*
-- **Direct Local Network (LAN) URL:** `http://192.168.1.72:4000` (Access from any smartphone or tablet connected to the local Wi-Fi)
-- **Local Fullstack Application:** `http://localhost:4000`
-- **Live Health Check Endpoint:** https://trustvault-demo.loca.lt/health (returns `{"status":"healthy","service":"TrustVault Core API",...}`)
-- **Public GitHub Repository:** https://github.com/BandiKoteswaraRao/TrustVault
-
-### Cloud Deployment (Render Blueprint)
-TrustVault is fully configured for 1-click cloud deployment via `render.yaml`:
-1. Push repository to GitHub.
-2. In [Render Dashboard](https://dashboard.render.com), click **New +** -> **Blueprint**.
-3. Select `TrustVault` to provision the PostgreSQL 16 database and Node.js fullstack service automatically.
-
-Refer to [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for full deployment instructions on free-tier hosting (Render, Vercel, Neon).
+| Role | Username / Email | Password | What You Can Test |
+| :--- | :--- | :--- | :--- |
+| **Admin** | `admin@trustvault.local` | `Admin@TrustVault2026!` | View system audit trail, run cryptographic verification, view all documents |
+| **Doc Owner (Alice)** | `owner@trustvault.local` | `Owner@TrustVault2026!` | Upload documents, edit files, grant/revoke sharing permissions |
+| **Viewer (Bob)** | `viewer@trustvault.local` | `Viewer@TrustVault2026!` | View shared docs; test IDOR blocking on Alice's private documents |
 
 ---
 
-## 9. Key Documentation Files
-- [Threat Model & Traceability Matrix (THREATS.md)](THREATS.md)
-- [AI-Assisted Development Log (PROMPTS.md)](PROMPTS.md)
-- [Free Live Deployment Guide (docs/DEPLOYMENT.md)](docs/DEPLOYMENT.md)
-- [Interactive Evaluation Demo Script (docs/DEMO_SCRIPT.md)](docs/DEMO_SCRIPT.md)
+## 🗄️ Running with Local MySQL Server
+
+To run TrustVault against your local MySQL server (`MySQL 8.x` or `MySQL 26.x`):
+
+1. **Create the database in MySQL:**
+   ```sql
+   CREATE DATABASE IF NOT EXISTS trustvault_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+   ```
+2. **Launch with MySQL Profile:**
+   ```powershell
+   $env:SPRING_PROFILES_ACTIVE = "mysql"
+   $env:SPRING_DATASOURCE_USERNAME = "root"
+   $env:SPRING_DATASOURCE_PASSWORD = "<YOUR_MYSQL_ROOT_PASSWORD>"
+   & "C:\Program Files\Java\jdk-25\bin\java.exe" -jar target\trustvault-1.0.0.jar
+   ```
+
+---
+
+## 🧪 Running Automated Tests
+
+TrustVault includes 18 automated integration tests covering authorization, IDOR defenses, upload validation, immediate revocation, and audit tamper detection:
+
+```powershell
+$env:JAVA_HOME = "C:\Program Files\Java\jdk-25"
+$env:Path = "C:\Program Files\Java\jdk-25\bin;$env:Path"
+cmd.exe /c "call `"$PWD\.tools\maven\bin\mvn.cmd`" test"
+```
+
+**Test Suite Coverage Summary:**
+```
+[INFO] Running com.trustvault.service.AuditChainIntegrityTests
+- Test 1: First audit record securely links to Genesis Hash [PASSED]
+- Test 2: Sequential records form an unbroken cryptographic SHA-256 chain [PASSED]
+- Test 3: Tampering with record details in DB is immediately detected [PASSED]
+- Test 4: Deleting an intermediate record breaks chain link and is detected [PASSED]
+
+[INFO] Running com.trustvault.security.DocumentAccessSecurityTests
+- IDOR Prevention: Bob cannot view Alice's unshared document metadata [PASSED]
+- IDOR Prevention: Bob cannot download Alice's unshared document file [PASSED]
+- IDOR Prevention: Bob cannot edit Alice's unshared document [PASSED]
+- IDOR Prevention: Bob cannot delete Alice's unshared document [PASSED]
+- Admin Role Authorization: Administrator can access any document [PASSED]
+
+[INFO] Running com.trustvault.controller.SharingImmediateRevocationTests
+- Smart Sharing: Owner grants READ -> Recipient accesses immediately [PASSED]
+- Immediate Revocation: Revoking access blocks recipient on next request [PASSED]
+- Role Enforcement: READ grantee cannot edit or delete document [PASSED]
+- Permission Upgrade: Upgrading to EDIT allows recipient modification [PASSED]
+
+[INFO] Running com.trustvault.service.DocumentServiceValidationTests
+- Upload Validation: Allowed extensions accepted and stored with SHA-256 [PASSED]
+- Upload Security: Dangerous executables (.exe, .jsp, .sh, .bat) blocked [PASSED]
+- Path Traversal Defense: Directory traversal in filenames intercepted [PASSED]
+- Upload Validation: Empty files rejected [PASSED]
+
+[INFO] Running com.trustvault.TrustVaultApplicationTests
+- Spring Boot Application Context loads cleanly [PASSED]
+
+[INFO] Tests run: 18, Failures: 0, Errors: 0, Skipped: 0
+[INFO] BUILD SUCCESS
+```
+
+---
+
+## 🧭 Core Endpoints & Route Map
+
+| Path | Method | Access Clearance | Purpose |
+| :--- | :---: | :---: | :--- |
+| `/login` | `GET`, `POST` | Public | Authentication & 1-click demo login |
+| `/register` | `GET`, `POST` | Public | Self-registration (Owner or Viewer) |
+| `/dashboard` | `GET` | Authenticated | Executive dashboard with metrics |
+| `/documents` | `GET` | Authenticated | Document table with search & category filter |
+| `/documents/upload` | `GET`, `POST` | Admin, Owner | Secure document upload |
+| `/documents/{id}` | `GET` | Owner, Grantee, Admin | Document metadata & access list (IDOR protected) |
+| `/documents/{id}/download` | `GET` | Owner, Grantee, Admin | Secure file download (IDOR protected) |
+| `/documents/{id}/edit` | `GET`, `POST` | Owner, Edit Grantee, Admin | Update title, description, category, file |
+| `/documents/{id}/delete` | `POST` | Owner, Admin | Delete document and disk file |
+| `/documents/{id}/share` | `GET`, `POST` | Owner, Admin | Grant READ or EDIT permission to user |
+| `/documents/{id}/revoke` | `POST` | Owner, Admin | Immediately revoke user access |
+| `/audit` | `GET` | Admin only | Audit trail explorer with filter bar |
+| `/audit/verify` | `POST` | Admin only | Trigger one-click chain verification |
+| `/access-denied` | `GET` | Public | Friendly 403 error page with IDOR details |
+
+---
+
+## 💡 Quick Guidance (Telugu-English / Simple English)
+
+> **English:** To start the application, open PowerShell and run:  
+> `java -jar target\trustvault-1.0.0.jar`  
+> Then open your browser at `http://localhost:8080`. You can click the demo buttons (Admin, Owner, Viewer) to log in instantly!
+>
+> **Telugu-English:** Application run cheyyadaniki, PowerShell lo ee command ivvandi:  
+> `java -jar target\trustvault-1.0.0.jar`  
+> Taruvatha browser lo `http://localhost:8080` open cheyyandi. Login screen meeda unna Admin, Owner, Viewer buttons meeda okkasari click chesthe credentials automatic ga fill ayyi login avvochu!
+
+---
+
+## 📁 Project Structure
+
+```
+TrustVault/
+├── pom.xml                               # Maven project descriptor & dependencies
+├── Dockerfile                            # Multi-stage production container build
+├── docker-compose.yml                    # Stack definition (App + MySQL 8.0)
+├── README.md                             # Comprehensive project documentation
+├── THREATS.md                            # STRIDE threat model & mitigations
+├── PROMPTS.md                            # AI engineering journal & genuine reflections
+├── SECURITY.md                           # Security architecture & crypto spec
+├── DATABASE.md                           # Schema definition & MySQL instructions
+├── DEPLOYMENT.md                         # Production Linux & Docker deployment guide
+├── DEMO_SCRIPT.md                        # Step-by-step evaluator testing guide
+├── database/
+│   ├── schema.sql                        # MySQL DDL table creation script
+│   └── seed.sql                          # Demo seed data script
+├── storage/uploads/                      # Private document storage folder
+└── src/
+    ├── main/
+    │   ├── java/com/trustvault/
+    │   │   ├── TrustVaultApplication.java
+    │   │   ├── config/                   # SecurityConfig, DataInitializer
+    │   │   ├── controller/               # Auth, Dashboard, Document, Audit controllers
+    │   │   ├── dto/                      # Data Transfer Objects & validation
+    │   │   ├── model/                    # JPA Entities (User, Document, Permission, Audit)
+    │   │   ├── repository/               # Spring Data JPA Repositories
+    │   │   ├── security/                 # UserDetails, SecurityUtils, AccessDeniedHandler
+    │   │   └── service/                  # Audit, Storage, Document, Permission, UserService
+    │   └── resources/
+    │       ├── application.properties    # Default profile (H2 MySQL mode)
+    │       ├── application-mysql.properties # MySQL production profile
+    │       ├── static/css/app.css        # Enterprise dark-theme CSS
+    │       ├── static/js/app.js          # Clipboard copy & dropzone JS
+    │       └── templates/                # Thymeleaf HTML views
+    └── test/                             # 18 Automated JUnit 5 integration tests
+```
+
+---
+
+## 📄 License
+This project is licensed under the MIT License.

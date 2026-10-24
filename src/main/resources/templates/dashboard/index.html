@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{layout/main :: layout(~{::title}, ~{::content})}">
+<head>
+    <title>Dashboard — TrustVault</title>
+</head>
+<body>
+<div th:fragment="content" class="space-y-6">
+
+    <!-- Hero / Welcome Banner -->
+    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-950/60 via-slate-900 to-indigo-950/60 border border-blue-900/40 p-6 sm:p-8 backdrop-blur-xl">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-cyan-400">Security Clearance</span>
+                    <span sec:authorize="hasRole('ADMIN')" class="text-xs font-bold uppercase tracking-wider text-rose-400 bg-rose-950/70 border border-rose-800 px-2 py-0.5 rounded-full">Administrator</span>
+                    <span sec:authorize="hasRole('OWNER')" class="text-xs font-bold uppercase tracking-wider text-blue-400 bg-blue-950/70 border border-blue-800 px-2 py-0.5 rounded-full">Document Owner</span>
+                    <span sec:authorize="hasRole('VIEWER')" class="text-xs font-bold uppercase tracking-wider text-emerald-400 bg-emerald-950/70 border border-emerald-800 px-2 py-0.5 rounded-full">Compliance Viewer</span>
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">
+                    Welcome back, <span class="bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent" th:text="${currentUser.fullName}">User</span>
+                </h1>
+                <p class="text-sm text-gray-400 mt-1">
+                    Zero-Trust Access Control &bull; Server-Side Authorization Enforced &bull; Cryptographic Hash Chaining Active
+                </p>
+            </div>
+            <div class="flex items-center gap-3">
+                <a sec:authorize="hasAnyRole('ADMIN', 'OWNER')" th:href="@{/documents/upload}"
+                   class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-medium text-sm shadow-lg shadow-blue-600/25 transition-all hover:scale-[1.02]">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                    Upload Document
+                </a>
+                <a th:href="@{/documents}"
+                   class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-200 font-medium text-sm border border-gray-700 transition-colors">
+                    Explore Vault
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Metric Cards & Chain Integrity Section -->
+    <div sec:authorize="hasRole('ADMIN')" class="space-y-6">
+        <!-- Metric Cards Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="glass-panel p-5 rounded-2xl border border-gray-800 flex items-center justify-between">
+                <div>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Total Documents</span>
+                    <h3 class="text-2xl font-bold text-white mt-1" th:text="${totalDocuments}">0</h3>
+                    <span class="text-[11px] text-blue-400 font-medium">Secured in private vault</span>
+                </div>
+                <div class="p-3 bg-blue-950/60 border border-blue-800/60 rounded-xl text-blue-400">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                </div>
+            </div>
+
+            <div class="glass-panel p-5 rounded-2xl border border-gray-800 flex items-center justify-between">
+                <div>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Active Users</span>
+                    <h3 class="text-2xl font-bold text-white mt-1" th:text="${totalUsers}">0</h3>
+                    <span class="text-[11px] text-indigo-400 font-medium">Admin &bull; Owner &bull; Viewer</span>
+                </div>
+                <div class="p-3 bg-indigo-950/60 border border-indigo-800/60 rounded-xl text-indigo-400">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                </div>
+            </div>
+
+            <div class="glass-panel p-5 rounded-2xl border border-gray-800 flex items-center justify-between">
+                <div>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Audit Chain Records</span>
+                    <h3 class="text-2xl font-bold text-white mt-1" th:text="${totalAudits}">0</h3>
+                    <span class="text-[11px] text-cyan-400 font-medium">SHA-256 Hash Chained</span>
+                </div>
+                <div class="p-3 bg-cyan-950/60 border border-cyan-800/60 rounded-xl text-cyan-400">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                </div>
+            </div>
+
+            <div class="glass-panel p-5 rounded-2xl border border-gray-800 flex items-center justify-between">
+                <div>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-gray-400">Security Denials (IDOR)</span>
+                    <h3 class="text-2xl font-bold text-rose-400 mt-1" th:text="${securityViolations}">0</h3>
+                    <span class="text-[11px] text-rose-400/80 font-medium">Blocked &amp; Audited</span>
+                </div>
+                <div class="p-3 bg-rose-950/60 border border-rose-800/60 rounded-xl text-rose-400">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cryptographic Audit Chain Integrity Verification Widget -->
+        <div class="glass-panel rounded-2xl border border-gray-800 p-6 relative">
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm font-bold uppercase tracking-wider text-gray-300">Audit Trail Cryptographic Status</span>
+                        <span th:if="${chainReport.valid}"
+                              class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-950/80 text-emerald-300 border border-emerald-500/50 shadow-sm">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                            Chain 100% Intact
+                        </span>
+                        <span th:unless="${chainReport.valid}"
+                              class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-rose-950/80 text-rose-300 border border-rose-500 shadow-sm animate-pulse">
+                            <span class="w-2 h-2 rounded-full bg-rose-400"></span>
+                            Tampering Detected
+                        </span>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-1 font-mono">
+                        Verified <span th:text="${chainReport.totalRecords}" class="font-bold text-gray-200">0</span> sequential blocks from Genesis hash.
+                        Last Verified: <span th:text="${chainReport.verifiedAt}" class="text-cyan-400">Just now</span>
+                    </p>
+                    <div class="mt-2 text-xs text-gray-400 flex items-center gap-2 flex-wrap">
+                        <span>Latest Block Hash:</span>
+                        <span class="hash-badge copy-hash" th:data-hash="${chainReport.latestHash}" th:text="${chainReport.latestHash}">000...</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <form th:action="@{/audit/verify}" method="post" class="inline">
+                        <button type="submit"
+                                class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-medium text-xs shadow-md shadow-emerald-900/30 transition-all hover:scale-105 active:scale-95">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                            Verify Chain Integrity
+                        </button>
+                    </form>
+                    <a th:href="@{/audit}"
+                       class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium text-xs border border-gray-700">
+                        View Audit Log
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Audit Events Feed (Admin View) -->
+        <div class="glass-panel rounded-2xl border border-gray-800 p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-sm font-bold uppercase tracking-wider text-gray-300 flex items-center gap-2">
+                    <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Real-Time Security Activity Feed
+                </h3>
+                <a th:href="@{/audit}" class="text-xs text-blue-400 hover:text-blue-300 font-medium">All Audit Records &rarr;</a>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                    <thead>
+                        <tr class="border-b border-gray-800 text-gray-400 uppercase tracking-wider">
+                            <th class="py-2.5 px-3">Timestamp</th>
+                            <th class="py-2.5 px-3">Actor</th>
+                            <th class="py-2.5 px-3">Action</th>
+                            <th class="py-2.5 px-3">Target</th>
+                            <th class="py-2.5 px-3">Status</th>
+                            <th class="py-2.5 px-3">Details</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-800/60 text-gray-300">
+                        <tr th:each="log : ${recentLogs}" class="hover:bg-gray-800/30 transition-colors">
+                            <td class="py-2.5 px-3 whitespace-nowrap font-mono text-gray-400" th:text="${#temporals.format(log.timestamp, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                            <td class="py-2.5 px-3 font-semibold text-gray-200" th:text="${log.actorUsername}"></td>
+                            <td class="py-2.5 px-3">
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider"
+                                      th:classappend="${log.action.name() == 'ACCESS_DENIED' ? 'bg-rose-950/70 text-rose-300 border border-rose-800' :
+                                                       log.action.name() == 'DOCUMENT_UPLOAD' ? 'bg-blue-950/70 text-blue-300 border border-blue-800' :
+                                                       log.action.name() == 'PERMISSION_GRANT' ? 'bg-purple-950/70 text-purple-300 border border-purple-800' :
+                                                       log.action.name() == 'PERMISSION_REVOKE' ? 'bg-amber-950/70 text-amber-300 border border-amber-800' :
+                                                       'bg-slate-800 text-slate-300 border border-slate-700'}"
+                                      th:text="${log.action}"></span>
+                            </td>
+                            <td class="py-2.5 px-3 font-mono text-gray-400" th:text="${log.targetId != null ? log.targetId : '-'}"></td>
+                            <td class="py-2.5 px-3">
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider"
+                                      th:classappend="${log.status.name() == 'SUCCESS' ? 'bg-emerald-950/60 text-emerald-400 border border-emerald-800' :
+                                                       log.status.name() == 'DENIED' ? 'bg-rose-950/60 text-rose-400 border border-rose-800' :
+                                                       'bg-amber-950/60 text-amber-400 border border-amber-800'}"
+                                      th:text="${log.status}"></span>
+                            </td>
+                            <td class="py-2.5 px-3 text-gray-400 max-w-xs truncate" th:title="${log.details}" th:text="${log.details}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Accessible Documents Table (Owner / Viewer / Admin View) -->
+    <div class="glass-panel rounded-2xl border border-gray-800 p-6">
+        <div class="flex items-center justify-between mb-4">
+            <div>
+                <h3 class="text-sm font-bold uppercase tracking-wider text-gray-300 flex items-center gap-2">
+                    <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
+                    Your Accessible Documents (<span th:text="${accessibleDocsCount}">0</span>)
+                </h3>
+                <p class="text-xs text-gray-400">Vault files authorized for your account via role or smart sharing</p>
+            </div>
+            <a th:href="@{/documents}" class="text-xs text-blue-400 hover:text-blue-300 font-medium">Browse All &rarr;</a>
+        </div>
+
+        <div th:if="${#lists.isEmpty(accessibleDocs)}" class="text-center py-12 text-gray-400">
+            <svg class="w-12 h-12 mx-auto text-gray-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            <p class="text-sm font-medium">No documents accessible yet.</p>
+            <p sec:authorize="hasAnyRole('ADMIN', 'OWNER')" class="text-xs text-gray-500 mt-1">Upload your first secure document to start sharing.</p>
+        </div>
+
+        <div th:unless="${#lists.isEmpty(accessibleDocs)}" class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+                <thead>
+                    <tr class="border-b border-gray-800 text-gray-400 uppercase tracking-wider">
+                        <th class="py-2.5 px-3">Title</th>
+                        <th class="py-2.5 px-3">Category</th>
+                        <th class="py-2.5 px-3">Owner</th>
+                        <th class="py-2.5 px-3">Size</th>
+                        <th class="py-2.5 px-3">Uploaded</th>
+                        <th class="py-2.5 px-3 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-800/60 text-gray-300">
+                    <tr th:each="doc : ${accessibleDocs}" class="hover:bg-gray-800/30 transition-colors">
+                        <td class="py-3 px-3">
+                            <a th:href="@{'/documents/' + ${doc.id}}" class="font-semibold text-blue-400 hover:text-blue-300 flex items-center gap-2">
+                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                <span th:text="${doc.title}">Title</span>
+                            </a>
+                        </td>
+                        <td class="py-3 px-3">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-gray-800 border border-gray-700 text-gray-300"
+                                  th:text="${doc.category}">Category</span>
+                        </td>
+                        <td class="py-3 px-3 font-medium text-gray-300" th:text="${doc.owner.fullName}"></td>
+                        <td class="py-3 px-3 font-mono text-gray-400" th:text="${#numbers.formatDecimal(doc.fileSize / 1024.0, 1, 1)} + ' KB'"></td>
+                        <td class="py-3 px-3 font-mono text-gray-400" th:text="${#temporals.format(doc.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+                        <td class="py-3 px-3 text-right space-x-2">
+                            <a th:href="@{'/documents/' + ${doc.id}}" class="px-2.5 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-700 text-xs font-medium">Details</a>
+                            <a th:href="@{'/documents/' + ${doc.id} + '/download'}" class="px-2.5 py-1 rounded-lg bg-blue-600/80 hover:bg-blue-600 text-white text-xs font-medium">Download</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

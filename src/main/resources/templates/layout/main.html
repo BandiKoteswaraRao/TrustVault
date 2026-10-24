@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:fragment="layout(title, content)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:replace="${title}">TrustVault — Tamper-Evident Document Sharing</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#0b0f19',
+                        darkCard: '#111827',
+                        darkBorder: '#1f2937'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233b82f6'><path d='M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z'/></svg>">
+</head>
+<body class="bg-[#0b0f19] text-gray-100 flex flex-col min-h-screen">
+
+    <!-- Top Navigation Bar -->
+    <header class="border-b border-gray-800 bg-[#0f172a]/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a th:href="@{/dashboard}" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-400 p-0.5 shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform">
+                    <div class="w-full h-full bg-slate-900 rounded-[10px] flex items-center justify-center">
+                        <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                        </svg>
+                    </div>
+                </div>
+                <div>
+                    <span class="text-xl font-bold bg-gradient-to-r from-blue-400 via-cyan-300 to-indigo-300 bg-clip-text text-transparent">TrustVault</span>
+                    <span class="hidden sm:inline-block text-[10px] tracking-wider uppercase font-semibold text-cyan-400 ml-1.5 px-1.5 py-0.5 bg-cyan-950/60 border border-cyan-800/60 rounded">Tamper-Evident</span>
+                </div>
+            </a>
+
+            <!-- Navigation Links -->
+            <nav sec:authorize="isAuthenticated()" class="hidden md:flex items-center gap-1">
+                <a th:href="@{/dashboard}" class="px-3 py-2 rounded-lg text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-800/60 transition-colors">
+                    Dashboard
+                </a>
+                <a th:href="@{/documents}" class="px-3 py-2 rounded-lg text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-800/60 transition-colors">
+                    Documents
+                </a>
+                <a sec:authorize="hasAnyRole('ADMIN', 'OWNER')" th:href="@{/documents/upload}" class="px-3 py-2 rounded-lg text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-800/60 transition-colors">
+                    Upload
+                </a>
+                <a sec:authorize="hasRole('ADMIN')" th:href="@{/audit}" class="px-3 py-2 rounded-lg text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-800/60 transition-colors flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    Audit Trail
+                </a>
+            </nav>
+
+            <!-- User Status & Actions -->
+            <div class="flex items-center gap-3">
+                <div sec:authorize="isAuthenticated()" class="flex items-center gap-3">
+                    <!-- User Details Pill -->
+                    <div class="hidden sm:flex flex-col text-right">
+                        <span class="text-sm font-semibold text-gray-200" sec:authentication="name">User</span>
+                        <div class="flex items-center justify-end gap-1.5">
+                            <span sec:authorize="hasRole('ADMIN')" class="text-[10px] font-bold uppercase tracking-wider text-rose-400 bg-rose-950/60 border border-rose-800/60 px-1.5 py-0.2 rounded">Admin</span>
+                            <span sec:authorize="hasRole('OWNER')" class="text-[10px] font-bold uppercase tracking-wider text-blue-400 bg-blue-950/60 border border-blue-800/60 px-1.5 py-0.2 rounded">Owner</span>
+                            <span sec:authorize="hasRole('VIEWER')" class="text-[10px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-950/60 border border-emerald-800/60 px-1.5 py-0.2 rounded">Viewer</span>
+                        </div>
+                    </div>
+
+                    <!-- Secure Logout Form (CSRF-protected) -->
+                    <form th:action="@{/logout}" method="post" class="inline m-0">
+                        <button type="submit" title="Sign out"
+                                class="p-2 rounded-lg text-gray-400 hover:text-rose-400 hover:bg-rose-950/30 border border-transparent hover:border-rose-900/50 transition-all">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+
+                <div sec:authorize="!isAuthenticated()" class="flex items-center gap-2">
+                    <a th:href="@{/login}" class="text-sm font-medium text-gray-300 hover:text-white px-3 py-1.5">Sign In</a>
+                    <a th:href="@{/register}" class="text-sm font-medium text-white bg-blue-600 hover:bg-blue-500 px-4 py-1.5 rounded-lg shadow-sm transition-colors">Register</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Global Alert Banners -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 w-full">
+        <!-- Success Alert -->
+        <div th:if="${successMessage}" class="mb-4 p-4 rounded-xl bg-emerald-950/50 border border-emerald-500/40 text-emerald-200 flex items-center justify-between shadow-lg shadow-emerald-950/20">
+            <div class="flex items-center gap-3">
+                <svg class="w-5 h-5 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span th:text="${successMessage}" class="text-sm font-medium">Operation completed successfully.</span>
+            </div>
+            <button onclick="this.parentElement.remove()" class="text-emerald-400 hover:text-emerald-200 text-sm font-bold">&times;</button>
+        </div>
+
+        <!-- Error Alert -->
+        <div th:if="${errorMessage}" class="mb-4 p-4 rounded-xl bg-rose-950/50 border border-rose-500/40 text-rose-200 flex items-center justify-between shadow-lg shadow-rose-950/20">
+            <div class="flex items-center gap-3">
+                <svg class="w-5 h-5 text-rose-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span th:text="${errorMessage}" class="text-sm font-medium">An error occurred during execution.</span>
+            </div>
+            <button onclick="this.parentElement.remove()" class="text-rose-400 hover:text-rose-200 text-sm font-bold">&times;</button>
+        </div>
+
+        <!-- Verification Success Banner -->
+        <div th:if="${verificationSuccess}" class="mb-4 p-4 rounded-xl bg-emerald-950/60 border border-emerald-500 text-emerald-200 flex items-center justify-between shadow-lg">
+            <div class="flex items-center gap-3">
+                <svg class="w-6 h-6 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                <div>
+                    <h4 class="font-bold text-emerald-300">Cryptographic Chain Intact</h4>
+                    <span th:text="${verificationSuccess}" class="text-xs text-emerald-300/90 font-mono">Verified.</span>
+                </div>
+            </div>
+            <button onclick="this.parentElement.remove()" class="text-emerald-400 hover:text-emerald-200 text-lg">&times;</button>
+        </div>
+
+        <!-- Tamper Alert Banner -->
+        <div th:if="${verificationFailure}" class="mb-4 p-4 rounded-xl bg-red-950/80 border-2 border-red-500 text-red-200 flex items-center justify-between shadow-2xl animate-pulse">
+            <div class="flex items-center gap-3">
+                <svg class="w-8 h-8 text-red-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                <div>
+                    <h4 class="font-bold text-red-400 uppercase tracking-wider text-sm">Security Incident: Audit Chain Tampering Detected</h4>
+                    <span th:text="${verificationFailure}" class="text-xs text-red-200 font-mono">Chain broken.</span>
+                </div>
+            </div>
+            <button onclick="this.parentElement.remove()" class="text-red-300 hover:text-white text-xl font-bold">&times;</button>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full">
+        <div th:replace="${content}">
+            <!-- Page content inserted here -->
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-gray-800/80 bg-[#090d16] py-6 text-center text-xs text-gray-500 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                <span class="text-gray-400 font-medium">TrustVault</span> &copy; 2026. Cryptographic Tamper-Evident Document Sharing System.
+            </div>
+            <div class="flex items-center gap-4 text-gray-400">
+                <span class="font-mono text-[11px] text-gray-500">SHA-256 Chain Secured</span>
+                <span>&bull;</span>
+                <span class="font-mono text-[11px] text-gray-500">Server-Side RBAC</span>
+            </div>
+        </div>
+    </footer>
+
+    <script th:src="@{/js/app.js}"></script>
+</body>
+</html>

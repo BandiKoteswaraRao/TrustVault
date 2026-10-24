@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>403 Forbidden — Access Intercepted | TrustVault</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="bg-[#0b0f19] text-gray-100 min-h-screen flex items-center justify-center p-4">
+
+    <div class="max-w-md w-full text-center">
+        <!-- Shield Icon with Warning Glow -->
+        <div class="inline-flex w-20 h-20 rounded-3xl bg-rose-950/70 border-2 border-rose-500/60 p-1 mb-6 cyber-glow-danger items-center justify-center animate-bounce">
+            <svg class="w-10 h-10 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+            </svg>
+        </div>
+
+        <h1 class="text-3xl font-extrabold text-white">403 — Access Denied</h1>
+        <p class="text-xs uppercase tracking-widest text-rose-400 font-bold mt-1">Security Enforcement Active</p>
+
+        <div class="bg-gray-900/80 border border-gray-800 rounded-2xl p-6 shadow-2xl backdrop-blur-xl mt-6 text-left space-y-4">
+            <p class="text-sm text-gray-300">
+                You do not possess the necessary clearance or cryptographic permissions to access this document or operation.
+            </p>
+
+            <div class="bg-gray-950 p-3 rounded-xl border border-gray-800 text-xs font-mono space-y-1">
+                <div class="text-gray-500 uppercase text-[10px]">Security Incident Details:</div>
+                <div class="text-rose-300">Policy: Insecure Direct Object Reference (IDOR) &amp; RBAC Check</div>
+                <div class="text-gray-400 truncate">Target: <span th:text="${blockedUri}" class="text-cyan-400">/documents/protected</span></div>
+                <div class="text-emerald-400">Status: Intercepted &amp; Recorded in Immutable Audit Chain</div>
+            </div>
+
+            <p class="text-xs text-gray-500">
+                If you believe this is in error, contact the document owner to request a READ or EDIT permission grant.
+            </p>
+
+            <div class="pt-2">
+                <a th:href="@{/dashboard}"
+                   class="block w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs text-center shadow-md shadow-blue-600/30 transition-all">
+                    Return to Vault Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

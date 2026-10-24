@@ -1,53 +1,46 @@
 version: '3.8'
 
 services:
-  postgres:
-    image: postgres:16-alpine
-    container_name: trustvault-db
+  mysql:
+    image: mysql:8.0
+    container_name: trustvault-mysql
+    restart: always
     environment:
-      POSTGRES_USER: trustvault_user
-      POSTGRES_PASSWORD: trustvault_secret_password_123
-      POSTGRES_DB: trustvault_db
+      MYSQL_DATABASE: trustvault_db
+      MYSQL_USER: trustvault_user
+      MYSQL_PASSWORD: trustvault_secure_password_2026!
+      MYSQL_ROOT_PASSWORD: trustvault_root_password_2026!
     ports:
-      - "5432:5432"
+      - "3306:3306"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - mysql_data:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U trustvault_user -d trustvault_db"]
-      interval: 5s
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
       timeout: 5s
       retries: 5
 
-  backend:
+  app:
     build:
-      context: ./backend
+      context: .
       dockerfile: Dockerfile
-    container_name: trustvault-api
+    container_name: trustvault-app
+    restart: always
     depends_on:
-      postgres:
+      mysql:
         condition: service_healthy
+    ports:
+      - "8080:8080"
     environment:
-      PORT: 4000
-      NODE_ENV: production
-      DATABASE_URL: postgresql://trustvault_user:trustvault_secret_password_123@postgres:5432/trustvault_db?sslmode=disable
-      JWT_SECRET: production_jwt_secret_must_be_at_least_32_characters_long_12345
-      CORS_ORIGIN: http://localhost:5173
-      STORAGE_DIR: storage/uploads
-    ports:
-      - "4000:4000"
+      SPRING_PROFILES_ACTIVE: mysql
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/trustvault_db?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: trustvault_user
+      SPRING_DATASOURCE_PASSWORD: trustvault_secure_password_2026!
+      TRUSTVAULT_STORAGE_UPLOAD_DIR: /app/storage/uploads
     volumes:
-      - vault_storage:/app/storage/uploads
-
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: trustvault-ui
-    depends_on:
-      - backend
-    ports:
-      - "5173:5173"
+      - document_storage:/app/storage/uploads
 
 volumes:
-  pgdata:
-  vault_storage:
+  mysql_data:
+  document_storage:

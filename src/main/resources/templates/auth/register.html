@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account — TrustVault</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="bg-[#0b0f19] text-gray-100 min-h-screen flex items-center justify-center p-4">
+
+    <div class="max-w-lg w-full">
+        <!-- Logo & Title -->
+        <div class="text-center mb-8">
+            <div class="inline-flex w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-400 p-0.5 shadow-xl shadow-blue-500/20 mb-3">
+                <div class="w-full h-full bg-slate-900 rounded-[14px] flex items-center justify-center">
+                    <svg class="w-7 h-7 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                    </svg>
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 via-cyan-300 to-indigo-300 bg-clip-text text-transparent">TrustVault</h1>
+            <p class="text-xs text-gray-400 mt-1 uppercase tracking-widest font-semibold">Create Secure User Account</p>
+        </div>
+
+        <!-- Registration Card -->
+        <div class="bg-gray-900/80 border border-gray-800 rounded-2xl p-6 sm:p-8 shadow-2xl backdrop-blur-xl">
+            <form th:action="@{/register}" th:object="${userDto}" method="post" class="space-y-4">
+                <div>
+                    <label for="fullName" class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Full Name</label>
+                    <input type="text" id="fullName" th:field="*{fullName}" required
+                           placeholder="e.g. Eleanor Vance"
+                           class="w-full px-4 py-2.5 rounded-xl bg-gray-950/80 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm text-gray-100 placeholder-gray-500 outline-none">
+                    <span th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}" class="text-xs text-rose-400 mt-1 block"></span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label for="username" class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Username</label>
+                        <input type="text" id="username" th:field="*{username}" required
+                               placeholder="e.g. eleanor_v"
+                               class="w-full px-4 py-2.5 rounded-xl bg-gray-950/80 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm text-gray-100 placeholder-gray-500 outline-none">
+                        <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="text-xs text-rose-400 mt-1 block"></span>
+                    </div>
+
+                    <div>
+                        <label for="email" class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Email Address</label>
+                        <input type="email" id="email" th:field="*{email}" required
+                               placeholder="eleanor@vault.local"
+                               class="w-full px-4 py-2.5 rounded-xl bg-gray-950/80 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm text-gray-100 placeholder-gray-500 outline-none">
+                        <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-xs text-rose-400 mt-1 block"></span>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="password" class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Password (min 8 chars)</label>
+                    <input type="password" id="password" th:field="*{password}" required
+                           placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
+                           class="w-full px-4 py-2.5 rounded-xl bg-gray-950/80 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm text-gray-100 placeholder-gray-500 outline-none">
+                    <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="text-xs text-rose-400 mt-1 block"></span>
+                </div>
+
+                <div>
+                    <label for="role" class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Account Role</label>
+                    <select id="role" th:field="*{role}"
+                            class="w-full px-4 py-2.5 rounded-xl bg-gray-950/80 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm text-gray-100 outline-none">
+                        <option value="ROLE_OWNER">Document Owner (Can upload, manage, and share documents)</option>
+                        <option value="ROLE_VIEWER">Viewer (Read-only access to documents explicitly shared)</option>
+                    </select>
+                    <span th:if="${#fields.hasErrors('role')}" th:errors="*{role}" class="text-xs text-rose-400 mt-1 block"></span>
+                </div>
+
+                <button type="submit"
+                        class="w-full mt-4 py-3 px-4 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-500 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold text-sm shadow-lg shadow-blue-600/30 transition-all hover:scale-[1.01] active:scale-[0.99]">
+                    Register Account
+                </button>
+            </form>
+
+            <div class="mt-6 pt-4 border-t border-gray-800 text-center">
+                <span class="text-xs text-gray-400">Already registered? </span>
+                <a th:href="@{/login}" class="text-xs font-semibold text-cyan-400 hover:text-cyan-300 underline">Sign in to TrustVault</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

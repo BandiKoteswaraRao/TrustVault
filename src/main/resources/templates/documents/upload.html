@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{layout/main :: layout(~{::title}, ~{::content})}">
+<head>
+    <title>Upload Secure Document — TrustVault</title>
+</head>
+<body>
+<div th:fragment="content" class="max-w-2xl mx-auto space-y-6">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-bold text-white flex items-center gap-2">
+                <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                Upload Document to Vault
+            </h1>
+            <p class="text-xs text-gray-400 mt-1">
+                Files are sanitized, encrypted on private disk storage with randomized UUIDs, and hashed.
+            </p>
+        </div>
+        <a th:href="@{/documents}" class="text-xs font-semibold text-gray-400 hover:text-white">Cancel</a>
+    </div>
+
+    <!-- Upload Card -->
+    <div class="glass-panel rounded-2xl border border-gray-800 p-6 sm:p-8">
+        <form th:action="@{/documents/upload}" th:object="${uploadDto}" method="post" enctype="multipart/form-data" class="space-y-5">
+            <div>
+                <label for="title" class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Document Title</label>
+                <input type="text" id="title" th:field="*{title}" required
+                       placeholder="e.g. Annual Audit Report 2026"
+                       class="w-full px-4 py-2.5 rounded-xl bg-gray-950/80 border border-gray-700 text-sm text-gray-100 placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+                <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="text-xs text-rose-400 mt-1 block"></span>
+            </div>
+
+            <div>
+                <label for="category" class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Security Category</label>
+                <select id="category" th:field="*{category}"
+                        class="w-full px-4 py-2.5 rounded-xl bg-gray-950/80 border border-gray-700 text-sm text-gray-100 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+                    <option value="Financial">Financial (Audits, Balance Sheets, Tax Filings)</option>
+                    <option value="Legal">Legal (Contracts, NDAs, Compliance Policies)</option>
+                    <option value="Confidential">Confidential (Board Minutes, Trade Secrets)</option>
+                    <option value="Technical">Technical (Architecture, Security Specs, Source Keys)</option>
+                    <option value="Personal">Personal (Identities, Credentials)</option>
+                    <option value="General" selected>General</option>
+                </select>
+                <span th:if="${#fields.hasErrors('category')}" th:errors="*{category}" class="text-xs text-rose-400 mt-1 block"></span>
+            </div>
+
+            <div>
+                <label for="description" class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Description (Optional)</label>
+                <textarea id="description" th:field="*{description}" rows="3"
+                          placeholder="Provide context regarding content, sensitivity, or intended recipients..."
+                          class="w-full px-4 py-2.5 rounded-xl bg-gray-950/80 border border-gray-700 text-sm text-gray-100 placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"></textarea>
+                <span th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="text-xs text-rose-400 mt-1 block"></span>
+            </div>
+
+            <!-- Drag & Drop Dropzone -->
+            <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Document File</label>
+                <div id="file-dropzone" class="dropzone p-6 text-center cursor-pointer relative">
+                    <input type="file" id="file" name="file" required
+                           accept=".pdf,.docx,.doc,.xlsx,.xls,.pptx,.txt,.csv,.png,.jpg,.jpeg,.zip"
+                           class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                    <svg class="w-10 h-10 mx-auto text-blue-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                    <p class="text-sm font-medium text-gray-200">Drag &amp; drop document here, or <span class="text-blue-400 underline">browse</span></p>
+                    <p class="text-[11px] text-gray-500 mt-1">Supported: PDF, DOCX, XLSX, PPTX, TXT, CSV, PNG, JPG, ZIP (Max 10MB)</p>
+                    <div id="file-name-display"></div>
+                </div>
+                <span th:if="${#fields.hasErrors('file')}" th:errors="*{file}" class="text-xs text-rose-400 mt-1 block"></span>
+            </div>
+
+            <div class="p-3 rounded-xl bg-gray-950/50 border border-gray-800 text-[11px] text-gray-400 flex items-start gap-2">
+                <svg class="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span>Security Notice: Path traversal sequences (`..`), null bytes, and executable extensions (`.exe`, `.jsp`, `.sh`) are automatically rejected. An immutable SHA-256 hash will be chained to the audit trail upon completion.</span>
+            </div>
+
+            <button type="submit"
+                    class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-500 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold text-sm shadow-lg shadow-blue-600/30 transition-all hover:scale-[1.01] active:scale-[0.99]">
+                Sign &amp; Store In Vault
+            </button>
+        </form>
+    </div>
+
+</div>
+</body>
+</html>
