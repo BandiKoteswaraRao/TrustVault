@@ -194,3 +194,30 @@ Zero compilation or type errors.
 
 **Commit:**
 `5503380` — `feat(frontend): implement React TypeScript UI with dashboard, documents, permissions, and audit explorer`
+
+## 2026-10-24 — Phase 7: Comprehensive Threat Model Review, SQLi/XSS/Path-Traversal Verification, and Traceability Audit
+
+**Prompt sent:**
+> "Review THREATS.md against the actual implementation, verify the complete security test suite across all 15 threats, and implement explicit tests for SQL injection parameterized query resilience, cross-site scripting payload neutral handling, and path traversal prevention."
+
+**Tool output:**
+The tool created `backend/tests/security/inputValidation.test.ts`, reviewed the STRIDE traceability matrix in `THREATS.md`, and executed the complete test suite across all 4 security test specifications.
+
+**Problem discovered:**
+1. While parameterized queries were used in `db/index.ts`, explicit automated negative tests specifically injecting malicious SQL syntax (`' OR 1=1 --`, `'; DROP TABLE documents; --`, `' UNION SELECT...`) were needed to prove that search query parameters and login strings cannot bypass authentication or cause syntax breaks.
+2. Verified that path traversal attacks attempting to write or read system paths (e.g. `../../../../etc/passwd.pdf`) are completely neutralized by `path.basename()` sanitization and server-side UUIDv4 storage mapping.
+
+**My correction:**
+1. Implemented `backend/tests/security/inputValidation.test.ts` testing SQL injection payloads in document search and auth endpoints, raw XSS payload storage and retrieval, and path traversal upload suppression.
+2. Verified that all 15 threats documented in `THREATS.md` correspond to real, passing automated tests.
+
+**Verification:**
+Executed `npm.cmd test` in `backend/`:
+All 34 tests passed cleanly across 4 test suites:
+- `backend/tests/security/auth.test.ts` (10 passed)
+- `backend/tests/security/authorization.test.ts` (13 passed)
+- `backend/tests/security/auditIntegrity.test.ts` (7 passed)
+- `backend/tests/security/inputValidation.test.ts` (4 passed)
+
+**Commit:**
+Commit `4b60098` (Pending Phase 7 commit)
