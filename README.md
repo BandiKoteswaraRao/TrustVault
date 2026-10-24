@@ -193,7 +193,7 @@ Test Files  4 passed (4)
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/<your-username>/TrustVault.git
+git clone https://github.com/BandiKoteswaraRao/TrustVault.git
 cd TrustVault
 ```
 
@@ -256,7 +256,7 @@ For the full 9-step evaluator demo walkthrough, refer to [docs/DEMO_SCRIPT.md](d
 - **Live Frontend URL:** *[Configured upon deployment]*
 - **Live Backend API URL:** *[Configured upon deployment]*
 - **API Health Check:** *[Configured upon deployment]/health*
-- **Public GitHub Repository:** *[Configured upon push]*
+- **Public GitHub Repository:** https://github.com/BandiKoteswaraRao/TrustVault
 
 Refer to [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for full deployment instructions on free-tier hosting (Render, Vercel, Neon).
 

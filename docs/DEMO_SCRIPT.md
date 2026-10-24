@@ -105,6 +105,6 @@ npm test
   - 4 SQL Injection, XSS, and Path Traversal tests
 
 ### Step 9: Review Live URL & Public GitHub Repository
-- **Public GitHub Repository:** *[Configured upon push]*
+- **Public GitHub Repository:** https://github.com/BandiKoteswaraRao/TrustVault
 - **Live Deployment URL:** *[Configured upon deployment]*
 - **Health Check Endpoint:** `https://<api-url>/health`
