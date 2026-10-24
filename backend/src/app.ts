@@ -6,6 +6,7 @@ import { globalLimiter } from './middleware/rateLimiter.js';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler.js';
 import authRoutes from './routes/authRoutes.js';
 import documentRoutes from './routes/documentRoutes.js';
+import auditRoutes from './routes/auditRoutes.js';
 
 export function createApp() {
   const app = express();
@@ -79,6 +80,7 @@ export function createApp() {
   // 6. Mount Feature Routes
   app.use('/api/auth', authRoutes);
   app.use('/api/documents', documentRoutes);
+  app.use('/api/audit', auditRoutes);
 
   // 7. Not Found & Central Error Handlers
   app.use(notFoundHandler);

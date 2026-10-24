@@ -133,3 +133,36 @@ All 23 tests passed across `auth.test.ts` and `authorization.test.ts`:
 
 **Commit:**
 `bb52f71` — `feat(documents): implement private file storage, owner-only authorization, immediate revocation, and security tests`
+
+## 2026-10-24 — Phase 5: Cryptographic Audit Trail, SHA-256 Hash Chaining & Tamper Verification
+
+**Prompt sent:**
+> "Implement an append-only, SHA-256 hash-linked audit trail with canonical JSON serialization, database transaction locking to prevent race conditions during concurrent writes, a full-chain cryptographic verification algorithm that detects data tampering, hash tampering, and deleted/reordered events, and an API endpoint returning verification results with HMAC checkpoint signatures."
+
+**Tool output:**
+The tool created `backend/src/controllers/auditController.ts`, `backend/src/routes/auditRoutes.ts`, mounted the endpoints in `backend/src/app.ts`, and authored the comprehensive verification test suite in `backend/tests/security/auditIntegrity.test.ts`.
+
+**Problem discovered:**
+1. **Non-Deterministic JSON Object Serialization:** Standard `JSON.stringify` does not guarantee key ordering across nested metadata dictionaries. An audit event created with metadata `{ role: 'admin', ip: '127.0.0.1' }` would fail hash verification if recomputed with keys in a different order, causing false-positive corruption alerts.
+2. **Timestamp Precision Discrepancies:** Databases store timestamps with varying sub-second precision (e.g., PostgreSQL microseconds vs ISO 8601 milliseconds). If the raw string differs slightly upon retrieval, the SHA-256 recomputed digest fails to match the original hash.
+3. **In-Database Hash Chain Threat Boundary:** Documented the security reality that an adversary with raw SQL write access to the database could theoretically rewrite an audit row and re-calculate all subsequent hashes. To mitigate this without third-party blockchain dependencies, we implemented an external HMAC checkpoint anchor (`AUDIT_HMAC_SECRET`) that cryptographically seals the chain head.
+
+**My correction:**
+1. Engineered a recursive `canonicalStringify()` function that sorts object keys lexicographically at every nesting depth before computing the SHA-256 digest.
+2. Normalized all timestamp inputs using `new Date(ts).toISOString()` during both event generation and verification recomputation.
+3. Protected concurrent event creation using database transactions with row-level locking on the latest sequence row, preventing race conditions or chain branching.
+4. Added API endpoints `GET /api/audit` (with user-level data scoping) and `GET /api/audit/verify` (returning total event count, integrity status, first point of corruption if detected, and HMAC signature).
+
+**Verification:**
+Executed `npm.cmd test` in `backend/`:
+All 30 tests passed across all 3 security test suites (including 7 new audit integrity tests):
+- `1. Computes valid hash chain with genesis link and external HMAC anchor` (Passed)
+- `2. Detects payload data tampering (e.g. modified action or outcome)` (Passed)
+- `3. Detects modified current_hash (tampered hash)` (Passed)
+- `4. Detects broken link / deleted historical event` (Passed)
+- `5. Maintains integrity during concurrent audit event writes` (Passed)
+- `6. API endpoint GET /api/audit/verify returns verification report` (Passed)
+- `7. API endpoint GET /api/audit filters logs by action and targetType` (Passed)
+
+**Commit:**
+Commit `483fa99` (Pending Phase 5 commit)
