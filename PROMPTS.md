@@ -220,4 +220,4 @@ All 34 tests passed cleanly across 4 test suites:
 - `backend/tests/security/inputValidation.test.ts` (4 passed)
 
 **Commit:**
-Commit `4b60098` (Pending Phase 7 commit)
+`d93def0` — `test(security): add SQL injection, XSS, and path traversal test suite with threat model traceability`
